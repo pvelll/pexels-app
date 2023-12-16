@@ -1,5 +1,7 @@
 package com.pvelll.newpexelsapp.domain.models
 
+import com.pvelll.newpexelsapp.data.model.Collection
+
 data class FeaturedCollectionResponse(
     val collections: List<Collection>,
     val next_page: String,
