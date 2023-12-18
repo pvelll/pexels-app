@@ -27,10 +27,10 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            buildConfigField("String", "API_KEY", "8ALtmQPhjTjdkUVCEMTtR6uTJTw9NLB2mEE0XwqSS6RFlTsV3moGwQwX")
+            buildConfigField("String", "API_KEY", "\"8ALtmQPhjTjdkUVCEMTtR6uTJTw9NLB2mEE0XwqSS6RFlTsV3moGwQwX\"")
         }
         debug {
-            buildConfigField("String", "API_KEY", "8ALtmQPhjTjdkUVCEMTtR6uTJTw9NLB2mEE0XwqSS6RFlTsV3moGwQwX")
+            buildConfigField("String", "API_KEY", "\"8ALtmQPhjTjdkUVCEMTtR6uTJTw9NLB2mEE0XwqSS6RFlTsV3moGwQwX\"")
         }
 
 

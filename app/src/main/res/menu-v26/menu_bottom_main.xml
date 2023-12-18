@@ -8,5 +8,6 @@
     <item
         android:id="@+id/bookmarksFragment"
         android:icon="@drawable/bookmarks_selector"
+        android:iconTint="@null"
         android:title="@string/bookmarks" />
 </menu>
