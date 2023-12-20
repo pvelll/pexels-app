@@ -1,7 +1,7 @@
 package com.pvelll.newpexelsapp.data.repository
 
 import com.pvelll.newpexelsapp.data.api.PexelApi
-import com.pvelll.newpexelsapp.domain.models.Photo
+import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.domain.repositories.PhotoByIdRepository
 
 class PhotoByIdRepositoryImpl(private val api : PexelApi): PhotoByIdRepository {

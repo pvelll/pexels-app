@@ -2,7 +2,7 @@ package com.pvelll.newpexelsapp.data.api
 
 import com.pvelll.newpexelsapp.domain.models.CuratedPhotosResponse
 import com.pvelll.newpexelsapp.domain.models.FeaturedCollectionResponse
-import com.pvelll.newpexelsapp.domain.models.Photo
+import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.domain.models.PhotosResponse
 import retrofit2.Response
 import retrofit2.http.GET

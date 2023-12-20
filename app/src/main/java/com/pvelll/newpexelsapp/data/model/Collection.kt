@@ -1,4 +1,4 @@
-package com.pvelll.newpexelsapp.domain.models
+package com.pvelll.newpexelsapp.data.model
 
 data class Collection(
     val description: Any,

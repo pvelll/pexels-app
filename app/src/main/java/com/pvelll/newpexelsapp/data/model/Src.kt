@@ -1,4 +1,4 @@
-package com.pvelll.newpexelsapp.domain.models
+package com.pvelll.newpexelsapp.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
