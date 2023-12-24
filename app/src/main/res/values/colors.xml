@@ -7,4 +7,6 @@
     <color name="red">#BB1020</color>
     <color name="night_theme_gray">#393939</color>
     <color name="night_theme_dark_gray">#B5B5B5</color>
+    <color name="ic_launcher_background">#BB1020</color>
+
 </resources>
