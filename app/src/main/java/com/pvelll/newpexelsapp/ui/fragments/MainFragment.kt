@@ -16,12 +16,12 @@ import com.pvelll.newpexelsapp.ui.viewmodels.MainViewModel
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var viewModel: MainViewModel
     companion object {
         fun newInstance() = MainFragment()
     }
 
-    private lateinit var viewModel: MainViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
