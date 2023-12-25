@@ -22,7 +22,6 @@
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@android:color/white"
         app:itemIconTint="@color/red"
         app:labelVisibilityMode="unlabeled"
         app:itemRippleColor="@null"
