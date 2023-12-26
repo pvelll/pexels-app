@@ -2,4 +2,9 @@
     <string name="app_name">NewPexelsApp</string>
     <string name="home">Home</string>
     <string name="bookmarks">Bookmarks</string>
+    <string name="picture">Picture</string>
+    <string name="saves_in_bookmarks">Save in Bookmarks\n</string>
+    <string name="download">Download</string>
+    <string name="redirects_to_main">Redirects to main</string>
+    <string name="shows_text_from_figma">shows text\n</string>
 </resources>
