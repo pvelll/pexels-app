@@ -18,7 +18,7 @@ interface PexelApi {
     ): Response<PhotosResponse>
 
     @GET("collections/featured")
-    suspend fun getFeaturedCollection(
+    suspend fun getPhotoGallery(
         @Query("per_page") perPage: Int = 7,
     ): Response<FeaturedCollectionResponse>
 

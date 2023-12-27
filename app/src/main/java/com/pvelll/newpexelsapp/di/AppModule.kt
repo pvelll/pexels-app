@@ -32,7 +32,4 @@ val appModule = module {
             .create(PexelApi::class.java)
 
     }
-    single<PhotosRepository> {
-        PhotosRepositoryImpl(get())
-    }
 }

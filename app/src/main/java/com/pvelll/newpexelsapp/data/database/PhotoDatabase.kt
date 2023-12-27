@@ -2,12 +2,13 @@ package com.pvelll.newpexelsapp.data.database
 
 import android.content.Context
 import androidx.room.*
-import androidx.sqlite.db.SupportSQLiteOpenHelper
+import com.pvelll.newpexelsapp.data.dao.PhotoDao
 import com.pvelll.newpexelsapp.data.model.Photo
 
 @Database(entities = [Photo::class], version = 1)
-@TypeConverters(SrcConverter::class)
+@TypeConverters(PhotoFormatConverter::class)
 abstract class PhotoDatabase : RoomDatabase(){
+    abstract fun photoDao(): PhotoDao
     companion object {
         @Volatile
         private var INSTANCE: PhotoDatabase? = null

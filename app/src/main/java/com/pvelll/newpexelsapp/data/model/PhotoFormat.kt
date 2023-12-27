@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Src(
+data class PhotoFormat(
     val landscape: String,
     val large: String,
     val large2x: String,
