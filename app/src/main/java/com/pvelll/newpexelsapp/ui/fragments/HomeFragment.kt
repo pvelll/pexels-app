@@ -8,17 +8,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.model.Photo
-import com.pvelll.newpexelsapp.data.model.Collection
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.databinding.FragmentHomeBinding
 import com.pvelll.newpexelsapp.domain.connectivity.ConnectivityObserver
@@ -118,7 +113,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             binding.progressBar.visibility =
                 if (progress < 100) View.VISIBLE else View.GONE
         })
-        viewModel.currentQuery.observe(viewLifecycleOwner, Observer { query ->
+        viewModel.currentQuery.observe(viewLifecycleOwner, Observer {
             for (i in 0 until binding.scrollLinearLayout.childCount) {
                 val child = binding.scrollLinearLayout.getChildAt(i)
             }

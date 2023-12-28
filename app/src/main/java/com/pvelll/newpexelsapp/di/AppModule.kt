@@ -13,7 +13,7 @@ val appModule = module {
             .addInterceptor { chain ->
                 val original = chain.request()
                 val requestBuilder = original.newBuilder()
-                    .header("Authorization", "8ALtmQPhjTjdkUVCEMTtR6uTJTw9NLB2mEE0XwqSS6RFlTsV3moGwQwX")
+                    .header("Authorization", BuildConfig.API_KEY)
                     .method(original.method(), original.body())
                 val request = requestBuilder.build()
                 chain.proceed(request)
