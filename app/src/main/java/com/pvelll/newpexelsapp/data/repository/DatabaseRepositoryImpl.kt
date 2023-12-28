@@ -6,7 +6,7 @@ import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.domain.repositories.DatabaseRepository
 
 class DatabaseRepositoryImpl(private val photoDao: PhotoDao): DatabaseRepository {
-    override suspend fun getPhotos(): LiveData<List<Photo>> {
+    override fun getPhotos(): LiveData<List<Photo>> {
         return photoDao.getaAll()
     }
 

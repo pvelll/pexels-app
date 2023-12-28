@@ -5,6 +5,6 @@ import com.pvelll.newpexelsapp.data.dao.PhotoDao
 import com.pvelll.newpexelsapp.data.model.Photo
 
 interface DatabaseRepository{
-    suspend fun getPhotos(): LiveData<List<Photo>>
+    fun getPhotos(): LiveData<List<Photo>>
     suspend fun insertPhoto(photo: Photo)
 }

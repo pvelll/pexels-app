@@ -8,11 +8,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.api.PexelApi
+import com.pvelll.newpexelsapp.data.model.Collection
 import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.databinding.FragmentHomeBinding
@@ -30,6 +34,8 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var searchQuery: String = ""
+    private var selectedView: View? = null
+    private var selectedTitle: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,12 +49,11 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         super.onViewCreated(view, savedInstanceState)
         val api by inject<PexelApi>()
         connectivityObserver = NetworkConnectivityObserver(requireContext())
-        val factory = HomeViewModelFactory(
-            api,
-            connectivityObserver as NetworkConnectivityObserver
-        )
+        val factory = HomeViewModelFactory(api, connectivityObserver as NetworkConnectivityObserver)
         onConnectivityError()
         viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
+        binding.scrollLinearLayout.orientation = LinearLayout.HORIZONTAL
+        viewModel.getGalleries()
         setupRecyclerView()
         setupListeners()
         setupObservers()
@@ -77,12 +82,26 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         binding.noDataLayout.visibility = View.GONE
 
     }
+
+    private fun setGalleries(items: ArrayList<Collection>){
+        items.forEach {
+            val item = it
+            val newItem: View = layoutInflater.inflate(R.layout.item_gallery_topic, null)
+            val textView: TextView = newItem.findViewById(R.id.featured_topic_text)
+            textView.text = it.title
+            newItem.setOnClickListener {
+                selectedView = newItem
+                binding.searchBar.setQuery(item.title, false)
+                viewModel.currentQuery.value = item.title
+            }
+            binding.scrollLinearLayout.addView(newItem)
+        }
+    }
     private fun setupObservers() {
         viewModel.pictureList.observe(viewLifecycleOwner, Observer {
-            val response = it
             if (it != null) {
-                if (response.photos.isNotEmpty()) {
-                    setPhotos(response.photos as ArrayList<Photo>)
+                if (it.photos.isNotEmpty()) {
+                    setPhotos(it.photos as ArrayList<Photo>)
                 } else {
                     showStub()
                 }
@@ -94,11 +113,20 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 }
             }
         })
-
+        viewModel.galleryList.observe(viewLifecycleOwner, Observer {
+            if(it?.collections != null) {
+                setGalleries(it.collections as ArrayList<Collection>)
+            } else {
+                if (!(connectivityObserver as NetworkConnectivityObserver).isConnected()) {
+                    onConnectivityError()
+                } else {
+                    // TODO: another error
+                }
+            }
+        })
         viewModel.curatedPhotosList.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                val response = it
-                setPhotos(response.photos as ArrayList<Photo>)
+                setPhotos(it.photos as ArrayList<Photo>)
             } else {
                 if (!(connectivityObserver as NetworkConnectivityObserver).isConnected()) {
                     onConnectivityError()
