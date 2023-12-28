@@ -1,7 +1,7 @@
 package com.pvelll.newpexelsapp.domain.repositories
 
-import com.pvelll.newpexelsapp.domain.models.FeaturedCollectionResponse
+import com.pvelll.newpexelsapp.domain.models.PhotoGalleryResponse
 
 interface PhotoGalleryRepository {
-    suspend fun getCollection(): FeaturedCollectionResponse
+    suspend fun getPhotoGallery(): PhotoGalleryResponse
 }

@@ -4,12 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
@@ -26,64 +23,45 @@ import java.net.URL
 
 class HomeRecyclerViewAdapter(
     private val listener: OnPhotoClickListener,
-) : RecyclerView.Adapter<HomeRecyclerViewAdapter.PictureViewHolder>() {
-
-    init {
-        setHasStableIds(true)
+) : RecyclerView.Adapter<HomeRecyclerViewAdapter.PhotoViewHolder>() {
+    private var photoList = mutableListOf<Photo>()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
+        val binding = ItemPictureBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PhotoViewHolder(binding)
     }
 
-    private val diffCallback = object : DiffUtil.ItemCallback<Photo>() {
-        override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Photo, newItem: Photo): Boolean {
-            return oldItem == newItem
-        }
-    }
-    private val differ = AsyncListDiffer(this, diffCallback)
-    private val currentList: List<Photo>
-        get() = differ.currentList
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int,
-    ): PictureViewHolder {
-        return PictureViewHolder(
-            ItemPictureBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
-    }
-
-    override fun onBindViewHolder(
-        holder: PictureViewHolder,
-        position: Int,
-    ) {
-        val photo = currentList[position]
+    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
+        val photo = photoList[position]
         holder.bind(photo)
         holder.itemView.setOnClickListener {
             listener.onPhotoClick(photo)
         }
     }
 
-    fun clearPictureData() {
-        differ.submitList(null)
-    }
-
     override fun getItemCount(): Int {
-        return currentList.size
+        return photoList.size
     }
 
-    class PictureViewHolder(private val binding: ItemPictureBinding) :
+    fun setPhotoData(photos: List<Photo>) {
+        photoList.clear()
+        photoList.addAll(photos)
+        notifyDataSetChanged()
+    }
+
+    fun clearPictureData() {
+        photoList.clear()
+        notifyDataSetChanged()
+    }
+
+    class PhotoViewHolder(private val binding: ItemPictureBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(photo: Photo) {
             binding.authorName.visibility = View.GONE
             itemView.setOnLongClickListener {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val file = File(binding.root.context.getExternalFilesDir(null), "${photo.id}.jpeg")
+                    val file =
+                        File(binding.root.context.getExternalFilesDir(null), "${photo.id}.jpeg")
                     try {
                         val db = Room.databaseBuilder(
                             binding.root.context,
@@ -99,7 +77,7 @@ class HomeRecyclerViewAdapter(
                                 ).show()
                             }
                         } else {
-                            val bytes = URL(photo.photoFormat.large2x).readBytes()
+                            val bytes = URL(photo.src.large2x).readBytes()
                             val outputStream = FileOutputStream(file)
                             outputStream.use {
                                 it.write(bytes)
@@ -122,7 +100,7 @@ class HomeRecyclerViewAdapter(
                 true
             }
             Glide.with(itemView)
-                .load(photo.photoFormat.large2x)
+                .load(photo.src.large2x)
                 .placeholder(R.drawable.default_card_image)
                 .into(binding.photoImage)
         }

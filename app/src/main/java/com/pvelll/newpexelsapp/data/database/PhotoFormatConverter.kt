@@ -2,16 +2,16 @@ package com.pvelll.newpexelsapp.data.database
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.pvelll.newpexelsapp.data.model.PhotoFormat
+import com.pvelll.newpexelsapp.data.model.Src
 
 class PhotoFormatConverter {
     @TypeConverter
-    fun fromPhotoFormat(photoFormat: PhotoFormat): String {
-        return Gson().toJson(photoFormat)
+    fun fromPhotoFormat(src: Src): String {
+        return Gson().toJson(src)
     }
 
     @TypeConverter
-    fun toPhotoFormat(srcString: String): PhotoFormat {
-        return Gson().fromJson(srcString, PhotoFormat::class.java)
+    fun toPhotoFormat(srcString: String): Src {
+        return Gson().fromJson(srcString, Src::class.java)
     }
 }

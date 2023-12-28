@@ -1,11 +1,11 @@
 package com.pvelll.newpexelsapp.data.model
 
-data class PhotoGallery(
+data class Collection(
     val description: Any,
     val id: String,
-    val mediaCount: Int,
-    val photosCount: Int,
+    val media_count: Int,
+    val photos_count: Int,
     val `private`: Boolean,
     val title: String,
-    val videosCount: Int
+    val videos_count: Int
 )

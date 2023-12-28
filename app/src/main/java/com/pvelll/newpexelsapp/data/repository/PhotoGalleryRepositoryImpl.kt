@@ -1,11 +1,13 @@
 package com.pvelll.newpexelsapp.data.repository
 
+
 import com.pvelll.newpexelsapp.data.api.PexelApi
-import com.pvelll.newpexelsapp.domain.models.FeaturedCollectionResponse
+import com.pvelll.newpexelsapp.domain.models.PhotoGalleryResponse
 import com.pvelll.newpexelsapp.domain.repositories.PhotoGalleryRepository
 
+
 class PhotoGalleryRepositoryImpl(private val api: PexelApi): PhotoGalleryRepository {
-    override suspend fun getCollection(): FeaturedCollectionResponse {
+    override suspend fun getPhotoGallery(): PhotoGalleryResponse {
         val response = api.getPhotoGallery()
         when(response.isSuccessful){
             true -> {

@@ -1,24 +1,27 @@
 package com.pvelll.newpexelsapp.ui.viewmodelfactories
 
-
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.data.repository.CuratedPhotosRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotoGalleryRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotosRepositoryImpl
+import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
+import org.koin.java.KoinJavaComponent.inject
 
 
 class HomeViewModelFactory(
-private val photosRepository: PhotosRepositoryImpl,
-private val photoGalleryRepository: PhotoGalleryRepositoryImpl,
-private val curatedPhotosRepository: CuratedPhotosRepositoryImpl,
-private val connectivityObserver: NetworkConnectivityObserver
+    private val api: PexelApi,
+    private val connectivityObserver: NetworkConnectivityObserver
 ) : ViewModelProvider.Factory{
-
+    private val photosRepository = PhotosRepositoryImpl(api)
+    private val photoGalleryRepository = PhotoGalleryRepositoryImpl(api)
+    private val curatedPhotosRepository = CuratedPhotosRepositoryImpl(api)
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return HomeViewModelFactory(
+        return HomeViewModel(
             photosRepository,
             photoGalleryRepository,
             curatedPhotosRepository,
