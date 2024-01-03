@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.databinding.FragmentMainBinding
 import com.pvelll.newpexelsapp.ui.viewmodels.MainViewModel
@@ -34,7 +37,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navController = (childFragmentManager.findFragmentById(R.id.mainContainerView) as NavHostFragment).findNavController()
-        NavigationUI.setupWithNavController(binding.navView, navController)
+        binding.navView.setupWithNavController(navController)
     }
 
     override fun onDestroyView() {

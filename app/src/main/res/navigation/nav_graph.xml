@@ -10,12 +10,8 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_home_to_bookmarks"
-            app:destination="@id/bookmarksFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right" />
+            android:id="@+id/action_homeFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
     </fragment>
 
     <fragment
@@ -24,11 +20,17 @@
         android:label="fragment_bookmarks"
         tools:layout="@layout/fragment_bookmarks">
         <action
-            android:id="@+id/action_bookmarks_to_home"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left" />
+            android:id="@+id/action_bookmarksFragment_to_detailsFragment2"
+            app:destination="@id/detailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.pvelll.newpexelsapp.ui.fragments.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" >
+        <argument
+            android:name="photo"
+            app:argType="com.pvelll.newpexelsapp.data.model.Photo" />
+    </fragment>
+
 </navigation>

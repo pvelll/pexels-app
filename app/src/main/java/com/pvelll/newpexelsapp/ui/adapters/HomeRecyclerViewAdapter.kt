@@ -56,45 +56,30 @@ class HomeRecyclerViewAdapter(
     class PhotoViewHolder(private val binding: ItemPictureBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private val db by lazy {
+            Room.databaseBuilder(
+                binding.root.context,
+                PhotoDatabase::class.java, "photos"
+            ).build()
+        }
+
         fun bind(photo: Photo) {
             binding.authorName.visibility = View.GONE
             itemView.setOnLongClickListener {
-                CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(Dispatchers.Default).launch {
                     val file =
                         File(binding.root.context.getExternalFilesDir(null), "${photo.id}.jpeg")
                     try {
-                        val db = Room.databaseBuilder(
-                            binding.root.context,
-                            PhotoDatabase::class.java, "photos"
-                        ).build()
                         val existingPhoto = db.photoDao().getById(photo.id)
-                        if (existingPhoto != null && file.exists()) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    binding.root.context,
-                                    "photo exists",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        } else {
-                            val bytes = URL(photo.src.large2x).readBytes()
-                            val outputStream = FileOutputStream(file)
-                            outputStream.use {
-                                it.write(bytes)
-                            }
-                            db.photoDao().insert(photo)
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    binding.root.context,
-                                    "successfully added to bookmarks",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                        existingPhoto?.let {
+                            if (file.exists()) {
+                                showToast("photo exists")
+                            } else {
+                                savePhoto(file, photo)
                             }
                         }
                     } catch (e: IOException) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(binding.root.context, "error", Toast.LENGTH_SHORT).show()
-                        }
+                        showToast("error")
                     }
                 }
                 true
@@ -103,6 +88,26 @@ class HomeRecyclerViewAdapter(
                 .load(photo.src.large2x)
                 .placeholder(R.drawable.default_card_image)
                 .into(binding.photoImage)
+        }
+
+        private suspend fun savePhoto(file: File, photo: Photo) {
+            val bytes = URL(photo.src.large2x).readBytes()
+            val outputStream = FileOutputStream(file)
+            outputStream.use {
+                it.write(bytes)
+            }
+            db.photoDao().insert(photo)
+            showToast("successfully added to bookmarks")
+        }
+
+        private suspend fun showToast(message: String) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    binding.root.context,
+                    message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }

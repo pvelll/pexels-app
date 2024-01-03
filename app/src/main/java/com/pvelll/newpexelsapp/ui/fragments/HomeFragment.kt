@@ -12,6 +12,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.pvelll.newpexelsapp.R
@@ -25,6 +27,9 @@ import com.pvelll.newpexelsapp.domain.usecases.OnPhotoClickListener
 import com.pvelll.newpexelsapp.ui.adapters.HomeRecyclerViewAdapter
 import com.pvelll.newpexelsapp.ui.viewmodelfactories.HomeViewModelFactory
 import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class HomeFragment : Fragment(), OnPhotoClickListener {
@@ -73,7 +78,8 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     }
 
     override fun onPhotoClick(photo: Photo) {
-        //todo: imgae click processing
+        val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(photo)
+        findNavController().navigate(action)
     }
 
     private fun setPhotos(items: ArrayList<Photo>) {
