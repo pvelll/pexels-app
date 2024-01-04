@@ -1,5 +1,6 @@
 package com.pvelll.newpexelsapp.ui.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -55,31 +57,21 @@ class HomeRecyclerViewAdapter(
 
     class PhotoViewHolder(private val binding: ItemPictureBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        private val db by lazy {
-            Room.databaseBuilder(
-                binding.root.context,
-                PhotoDatabase::class.java, "photos"
-            ).build()
-        }
-
+        private val db by inject<PhotoDatabase>(PhotoDatabase::class.java)
         fun bind(photo: Photo) {
             binding.authorName.visibility = View.GONE
-            itemView.setOnLongClickListener {
+            binding.photoCardView.setOnLongClickListener {
                 CoroutineScope(Dispatchers.Default).launch {
                     val file =
                         File(binding.root.context.getExternalFilesDir(null), "${photo.id}.jpeg")
-                    try {
-                        val existingPhoto = db.photoDao().getById(photo.id)
-                        existingPhoto?.let {
-                            if (file.exists()) {
-                                showToast("photo exists")
-                            } else {
-                                savePhoto(file, photo)
-                            }
+                    if (file.exists()) {
+                        showToast("photo exists")
+                    } else {
+                        try {
+                            savePhoto(file, photo)
+                        } catch (e: IOException) {
+                            showToast("error")
                         }
-                    } catch (e: IOException) {
-                        showToast("error")
                     }
                 }
                 true
@@ -93,6 +85,7 @@ class HomeRecyclerViewAdapter(
         private suspend fun savePhoto(file: File, photo: Photo) {
             val bytes = URL(photo.src.large2x).readBytes()
             val outputStream = FileOutputStream(file)
+            Log.d("Saving photo", "photo saved")
             outputStream.use {
                 it.write(bytes)
             }

@@ -21,3 +21,4 @@ interface PhotoDao {
     @Delete
     suspend fun delete(photo: Photo)
 }
+

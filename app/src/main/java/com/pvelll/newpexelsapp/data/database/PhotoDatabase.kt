@@ -5,9 +5,9 @@ import androidx.room.*
 import com.pvelll.newpexelsapp.data.dao.PhotoDao
 import com.pvelll.newpexelsapp.data.model.Photo
 
-@Database(entities = [Photo::class], version = 1)
+@Database(entities =[Photo::class], version = 1)
 @TypeConverters(PhotoFormatConverter::class)
-abstract class PhotoDatabase : RoomDatabase(){
+abstract class PhotoDatabase : RoomDatabase() {
     abstract fun photoDao(): PhotoDao
     companion object {
         @Volatile

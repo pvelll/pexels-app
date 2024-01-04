@@ -1,7 +1,6 @@
 package com.pvelll.newpexelsapp.data.repository
 
 import com.pvelll.newpexelsapp.data.api.PexelApi
-import com.pvelll.newpexelsapp.di.appModule
 import com.pvelll.newpexelsapp.domain.models.PhotosResponse
 import com.pvelll.newpexelsapp.domain.repositories.PhotosRepository
 
