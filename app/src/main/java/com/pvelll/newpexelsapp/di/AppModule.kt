@@ -4,7 +4,9 @@ import androidx.room.Room
 import com.pvelll.newpexelsapp.BuildConfig
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
+import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,6 +31,7 @@ val apiModule = module {
             .create(PexelApi::class.java)
 
     }
+
 }
 
 val databaseModule = module{
@@ -37,5 +40,11 @@ val databaseModule = module{
     }
     single {
         get<PhotoDatabase>().photoDao()
+    }
+}
+
+val networkConnectivityModule = module{
+    single {
+         NetworkConnectivityObserver(androidApplication())
     }
 }
