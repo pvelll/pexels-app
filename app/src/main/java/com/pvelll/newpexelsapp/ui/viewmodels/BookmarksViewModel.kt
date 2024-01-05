@@ -9,11 +9,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.data.repository.DatabaseRepositoryImpl
 import com.pvelll.newpexelsapp.ui.adapters.BookmarksRecyclerViewAdapter
+import org.koin.java.KoinJavaComponent.inject
 
-class BookmarksViewModel(private val repository : DatabaseRepositoryImpl, private val application: Application) : AndroidViewModel(application) {
+class BookmarksViewModel( private val application: Application) : AndroidViewModel(application) {
+    private val dataBase by inject<PhotoDatabase>(PhotoDatabase::class.java)
+    private val repository : DatabaseRepositoryImpl
+        get() = DatabaseRepositoryImpl(dataBase.photoDao())
     private var loading: MutableLiveData<Boolean> = MutableLiveData()
     var loadingProgress: MutableLiveData<Int> = MutableLiveData(0)
     val allPhotos: LiveData<List<Photo>> = repository.getPhotos()
