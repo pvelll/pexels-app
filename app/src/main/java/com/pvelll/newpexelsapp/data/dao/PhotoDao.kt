@@ -7,7 +7,7 @@ import com.pvelll.newpexelsapp.data.model.Photo
 @Dao
 interface PhotoDao {
     @Query("SELECT * FROM photos")
-    suspend fun getaAll(): LiveData<List<Photo>>
+    fun getaAll(): LiveData<List<Photo>>
 
     @Query("SELECT * FROM photos WHERE id = :id")
     suspend fun getById(id: Int): Photo?
@@ -21,3 +21,4 @@ interface PhotoDao {
     @Delete
     suspend fun delete(photo: Photo)
 }
+

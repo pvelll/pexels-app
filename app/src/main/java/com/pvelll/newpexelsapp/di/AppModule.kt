@@ -1,18 +1,17 @@
 package com.pvelll.newpexelsapp.di
 
+import androidx.room.Room
 import com.pvelll.newpexelsapp.BuildConfig
 import com.pvelll.newpexelsapp.data.api.PexelApi
+import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
-import com.pvelll.newpexelsapp.data.repository.PhotosRepositoryImpl
-import com.pvelll.newpexelsapp.domain.connectivity.ConnectivityObserver
-import com.pvelll.newpexelsapp.domain.repositories.PhotosRepository
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val appModule = module {
-    single<ConnectivityObserver> {NetworkConnectivityObserver(get())}
+val apiModule = module {
     single{
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -32,7 +31,20 @@ val appModule = module {
             .create(PexelApi::class.java)
 
     }
-    single<PhotosRepository> {
-        PhotosRepositoryImpl(get())
+
+}
+
+val databaseModule = module{
+    single{
+        Room.databaseBuilder(get(), PhotoDatabase::class.java, "photos").build()
+    }
+    single {
+        get<PhotoDatabase>().photoDao()
+    }
+}
+
+val networkConnectivityModule = module{
+    single {
+         NetworkConnectivityObserver(androidApplication())
     }
 }

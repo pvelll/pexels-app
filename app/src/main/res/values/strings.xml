@@ -7,4 +7,5 @@
     <string name="download">Download</string>
     <string name="redirects_to_main">Redirects to main</string>
     <string name="shows_text_from_figma">shows text\n</string>
+    <string name="author_name">Author Name</string>
 </resources>

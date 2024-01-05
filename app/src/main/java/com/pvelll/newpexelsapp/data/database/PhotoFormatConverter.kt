@@ -4,14 +4,14 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.pvelll.newpexelsapp.data.model.Src
 
-class SrcConverter {
+class PhotoFormatConverter {
     @TypeConverter
-    fun fromSrc(src: Src): String {
+    fun fromPhotoFormat(src: Src): String {
         return Gson().toJson(src)
     }
 
     @TypeConverter
-    fun toSrc(srcString: String): Src {
+    fun toPhotoFormat(srcString: String): Src {
         return Gson().fromJson(srcString, Src::class.java)
     }
 }

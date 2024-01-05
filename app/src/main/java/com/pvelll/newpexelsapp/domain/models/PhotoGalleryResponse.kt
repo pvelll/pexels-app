@@ -2,7 +2,7 @@ package com.pvelll.newpexelsapp.domain.models
 
 import com.pvelll.newpexelsapp.data.model.Collection
 
-data class FeaturedCollectionResponse(
+data class PhotoGalleryResponse(
     val collections: List<Collection>,
     val next_page: String,
     val page: Int,
