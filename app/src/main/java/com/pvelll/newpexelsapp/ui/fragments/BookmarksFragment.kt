@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.pvelll.newpexelsapp.R
@@ -85,7 +86,8 @@ class BookmarksFragment : Fragment() , OnPhotoClickListener{
     }
 
     override fun onPhotoClick(photo: Photo) {
-        TODO("Not yet implemented")
+        val action = BookmarksFragmentDirections.actionBookmarksFragmentToDetailsFragment2(photo)
+        findNavController().navigate(action)
     }
 
 

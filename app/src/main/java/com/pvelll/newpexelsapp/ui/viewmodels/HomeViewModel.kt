@@ -1,9 +1,13 @@
 package com.pvelll.newpexelsapp.ui.viewmodels
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.data.repository.CuratedPhotosRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotoGalleryRepositoryImpl
@@ -13,14 +17,19 @@ import com.pvelll.newpexelsapp.domain.models.PhotoGalleryResponse
 import com.pvelll.newpexelsapp.domain.models.PhotosResponse
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent
 import retrofit2.Response
 
 class HomeViewModel(
-    private val photosRepository: PhotosRepositoryImpl,
-    private val photoGalleryRepository: PhotoGalleryRepositoryImpl,
-    private val curatedPhotosRepository: CuratedPhotosRepositoryImpl,
-    private val connectivityObserver: NetworkConnectivityObserver
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+    private val api by KoinJavaComponent.inject<PexelApi>(PexelApi::class.java)
+    private val connectivityObserver by KoinJavaComponent.inject<NetworkConnectivityObserver>(
+        NetworkConnectivityObserver::class.java
+    )
+    private val photosRepository: PhotosRepositoryImpl = PhotosRepositoryImpl(api)
+    private val photoGalleryRepository: PhotoGalleryRepositoryImpl = PhotoGalleryRepositoryImpl(api)
+    private val curatedPhotosRepository: CuratedPhotosRepositoryImpl = CuratedPhotosRepositoryImpl(api)
     var pictureList: MutableLiveData<PhotosResponse> = MutableLiveData()
     var galleryList: MutableLiveData<PhotoGalleryResponse> = MutableLiveData()
     var curatedPhotosList: MutableLiveData<CuratedPhotosResponse> = MutableLiveData()
@@ -28,10 +37,16 @@ class HomeViewModel(
     private var loading: MutableLiveData<Boolean> = MutableLiveData()
     var loadingProgress: MutableLiveData<Int> = MutableLiveData(0)
 
+    private val _isNetworkAvailable = MutableLiveData<Boolean>()
+    val isNetworkAvailable: LiveData<Boolean>
+        get() = _isNetworkAvailable
     init {
+        _isNetworkAvailable.value = connectivityObserver.isConnected()
         getCuratedPhotos()
         getGalleries()
     }
+
+
 
     fun getPicture(query: String) {
         viewModelScope.launch {

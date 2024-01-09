@@ -26,14 +26,12 @@ import com.pvelll.newpexelsapp.domain.connectivity.ConnectivityObserver
 import com.pvelll.newpexelsapp.domain.usecases.OnPhotoClickListener
 import com.pvelll.newpexelsapp.ui.adapters.HomeRecyclerViewAdapter
 import com.pvelll.newpexelsapp.ui.utils.SlideInUpAnimator
-import com.pvelll.newpexelsapp.ui.viewmodelfactories.HomeViewModelFactory
 import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import org.koin.android.ext.android.inject
 
 class HomeFragment : Fragment(), OnPhotoClickListener {
     private lateinit var viewModel: HomeViewModel
     private lateinit var photoAdapter: HomeRecyclerViewAdapter
-    private lateinit var connectivityObserver: ConnectivityObserver
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var searchQuery: String = ""
@@ -50,11 +48,8 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val api by inject<PexelApi>()
-        connectivityObserver = NetworkConnectivityObserver(requireContext())
-        val factory = HomeViewModelFactory(api, connectivityObserver as NetworkConnectivityObserver)
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         onConnectivityError()
-        viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
         binding.scrollLinearLayout.orientation = LinearLayout.HORIZONTAL
         viewModel.getGalleries()
         setupRecyclerView()
@@ -63,7 +58,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     }
 
     private fun onConnectivityError() {
-        if (!(connectivityObserver as NetworkConnectivityObserver).isConnected()) {
+        if (viewModel.isNetworkAvailable.value == false) {
             binding.mainHomeLayout.visibility = View.GONE
             binding.noNetworkLayout.visibility = View.VISIBLE
             Toast.makeText(requireContext(), "No network connection", Toast.LENGTH_SHORT).show()
@@ -87,7 +82,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
 
     }
 
-    private fun setGalleries(items: ArrayList<Collection>){
+    private fun setGalleries(items: ArrayList<Collection>) {
         items.forEach {
             val item = it
             val newItem: View = layoutInflater.inflate(R.layout.item_gallery_topic, null)
@@ -101,6 +96,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             binding.scrollLinearLayout.addView(newItem)
         }
     }
+
     private fun setupObservers() {
         viewModel.pictureList.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -110,7 +106,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                     showStub()
                 }
             } else {
-                if (!(connectivityObserver as NetworkConnectivityObserver).isConnected()) {
+                if (viewModel.isNetworkAvailable.value == false) {
                     onConnectivityError()
                 } else {
                     // TODO: another error
@@ -118,10 +114,10 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             }
         })
         viewModel.galleryList.observe(viewLifecycleOwner, Observer {
-            if(it?.collections != null) {
+            if (it?.collections != null) {
                 setGalleries(it.collections as ArrayList<Collection>)
             } else {
-                if (!(connectivityObserver as NetworkConnectivityObserver).isConnected()) {
+                if (viewModel.isNetworkAvailable.value == false) {
                     onConnectivityError()
                 } else {
                     // TODO: another error
@@ -132,7 +128,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             if (it != null) {
                 setPhotos(it.photos as ArrayList<Photo>)
             } else {
-                if (!(connectivityObserver as NetworkConnectivityObserver).isConnected()) {
+                if (viewModel.isNetworkAvailable.value == false) {
                     onConnectivityError()
                 } else {
                     // TODO: another error
@@ -184,7 +180,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             }
         })
         binding.tryAgainButton.setOnClickListener {
-            if ((connectivityObserver as NetworkConnectivityObserver).isConnected()) {
+            if (viewModel.isNetworkAvailable.value == true) {
                 if (searchQuery.isNotEmpty()) {
                     viewModel.getPicture(searchQuery)
                 } else {
