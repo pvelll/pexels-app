@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -33,10 +34,13 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     private lateinit var viewModel: HomeViewModel
     private lateinit var photoAdapter: HomeRecyclerViewAdapter
     private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    private val binding
+        get() = _binding!!
     private var searchQuery: String = ""
     private var selectedView: View? = null
     private var selectedTitle: String? = null
+    private var previousSelectedView: View? = null
+    private var previousTextView: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,11 +91,19 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             val item = it
             val newItem: View = layoutInflater.inflate(R.layout.item_gallery_topic, null)
             val textView: TextView = newItem.findViewById(R.id.featured_topic_text)
-            textView.text = it.title
+            textView.text = item.title
             newItem.setOnClickListener {
+                previousSelectedView?.background =
+                    context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.gallery_selector) }
+                previousTextView?.setTextColor(resources.getColor(R.color.text))
+
                 selectedView = newItem
                 binding.searchBar.setQuery(item.title, false)
                 viewModel.currentQuery.value = item.title
+                selectedView!!.background = context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.gallery_item_selected) }
+                textView.setTextColor(resources.getColor(R.color.text))
+                previousSelectedView = selectedView
+                previousTextView = textView
             }
             binding.scrollLinearLayout.addView(newItem)
         }
@@ -144,6 +156,14 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         viewModel.currentQuery.observe(viewLifecycleOwner, Observer {
             for (i in 0 until binding.scrollLinearLayout.childCount) {
                 val child = binding.scrollLinearLayout.getChildAt(i)
+                val textView: TextView = child.findViewById(R.id.featured_topic_text)
+                if (textView.text.toString().equals(it, ignoreCase = true)) {
+                    child.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.gallery_item_selected
+                    )
+                    textView.setTextColor(resources.getColor(R.color.text))
+                }
             }
         })
     }
@@ -176,6 +196,11 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 searchQuery = newText
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 500)
+                if (newText != selectedTitle) {
+                    selectedTitle = null
+                    selectedView!!.background = context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.gallery_selector) }
+                    selectedView!!.findViewById<TextView>(R.id.featured_topic_text).setTextColor(resources.getColor(R.color.text))
+                }
                 return false
             }
         })

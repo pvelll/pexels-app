@@ -40,13 +40,12 @@ class HomeViewModel(
     private val _isNetworkAvailable = MutableLiveData<Boolean>()
     val isNetworkAvailable: LiveData<Boolean>
         get() = _isNetworkAvailable
+
     init {
         _isNetworkAvailable.value = connectivityObserver.isConnected()
         getCuratedPhotos()
         getGalleries()
     }
-
-
 
     fun getPicture(query: String) {
         viewModelScope.launch {
@@ -85,13 +84,10 @@ class HomeViewModel(
         val endValue = 100
         val duration = 1000
         val interval = 20
-
         val steps = duration / interval
         val stepValue = (endValue - startValue) / steps
-
         var currentValue = startValue
-
-        repeat(steps.toInt()) {
+        repeat(steps) {
             currentValue += stepValue
             if (currentValue > endValue) {
                 currentValue = endValue
