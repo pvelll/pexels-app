@@ -9,3 +9,5 @@
         android:name="com.pvelll.newpexelsapp.ui.fragments.MainFragment"
         android:label="MainFragment" />
 </navigation>
+
+<!--navigation in application-->

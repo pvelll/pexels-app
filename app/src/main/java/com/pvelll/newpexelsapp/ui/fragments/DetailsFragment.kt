@@ -39,7 +39,7 @@ class DetailsFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(DetailsViewModel::class.java)
+        viewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
         val args: DetailsFragmentArgs by navArgs()
         viewModel.init(args.photo)
         setupClickListeners()
