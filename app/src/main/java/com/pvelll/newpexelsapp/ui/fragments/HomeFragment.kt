@@ -94,13 +94,23 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             textView.text = item.title
             newItem.setOnClickListener {
                 previousSelectedView?.background =
-                    context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.gallery_selector) }
+                    context?.let { it1 ->
+                        ContextCompat.getDrawable(
+                            it1,
+                            R.drawable.gallery_selector
+                        )
+                    }
                 previousTextView?.setTextColor(resources.getColor(R.color.text))
 
                 selectedView = newItem
                 binding.searchBar.setQuery(item.title, false)
                 viewModel.currentQuery.value = item.title
-                selectedView!!.background = context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.gallery_item_selected) }
+                selectedView!!.background = context?.let { it1 ->
+                    ContextCompat.getDrawable(
+                        it1,
+                        R.drawable.gallery_item_selected
+                    )
+                }
                 textView.setTextColor(resources.getColor(R.color.text))
                 previousSelectedView = selectedView
                 previousTextView = textView
@@ -166,6 +176,8 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 }
             }
         })
+
+        viewModel.isNetworkAvailable.observe(viewLifecycleOwner, Observer { onConnectivityError() })
     }
 
     private fun setupListeners() {
@@ -196,10 +208,18 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 searchQuery = newText
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 500)
-                if (newText != selectedTitle) {
-                    selectedTitle = null
-                    selectedView!!.background = context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.gallery_selector) }
-                    selectedView!!.findViewById<TextView>(R.id.featured_topic_text).setTextColor(resources.getColor(R.color.text))
+                if(viewModel.isNetworkAvailable.value == true){
+                    if (newText != selectedTitle) {
+                        selectedTitle = null
+                        selectedView!!.background = context?.let { it1 ->
+                            ContextCompat.getDrawable(
+                                it1,
+                                R.drawable.gallery_selector
+                            )
+                        }
+                        selectedView!!.findViewById<TextView>(R.id.featured_topic_text)
+                            .setTextColor(resources.getColor(R.color.text))
+                    }
                 }
                 return false
             }
