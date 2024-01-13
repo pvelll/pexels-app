@@ -1,6 +1,5 @@
 package com.pvelll.newpexelsapp.ui.fragments
 
-import android.os.Binder
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,17 +10,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.pvelll.newpexelsapp.R
-import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
-import com.pvelll.newpexelsapp.data.repository.DatabaseRepositoryImpl
 import com.pvelll.newpexelsapp.databinding.FragmentBookmarksBinding
 import com.pvelll.newpexelsapp.domain.usecases.OnPhotoClickListener
 import com.pvelll.newpexelsapp.ui.adapters.BookmarksRecyclerViewAdapter
 import com.pvelll.newpexelsapp.ui.viewmodelfactories.BookmarksViewModelFactory
 import com.pvelll.newpexelsapp.ui.viewmodels.BookmarksViewModel
 
-class BookmarksFragment : Fragment() , OnPhotoClickListener{
+class BookmarksFragment : Fragment(), OnPhotoClickListener {
 
     companion object {
         fun newInstance() = BookmarksFragment()
@@ -35,7 +31,7 @@ class BookmarksFragment : Fragment() , OnPhotoClickListener{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentBookmarksBinding.inflate(inflater,container,false)
+        _binding = FragmentBookmarksBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -45,12 +41,14 @@ class BookmarksFragment : Fragment() , OnPhotoClickListener{
             this,
             BookmarksViewModelFactory(requireActivity().application)
         )[BookmarksViewModel::class.java]
+        setupListener()
         onEmptyPhotoList()
         setupRecyclerView()
 
     }
+
     private fun setupRecyclerView() {
-        recyclerViewAdapter = BookmarksRecyclerViewAdapter( this)
+        recyclerViewAdapter = BookmarksRecyclerViewAdapter(this)
         viewModel.setPictureAdapter(recyclerViewAdapter)
         binding.pictureRecyclerView.apply {
             adapter = recyclerViewAdapter
@@ -59,10 +57,18 @@ class BookmarksFragment : Fragment() , OnPhotoClickListener{
         }
     }
 
+    private fun setupListener() {
+        binding.exploreButtonBookmarks.setOnClickListener {
+            val action = BookmarksFragmentDirections.actionBookmarksFragmentToHomeFragment2()
+            findNavController().navigate(action)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
+
     override fun onResume() {
         super.onResume()
         viewModel.allPhotos.observe(viewLifecycleOwner, Observer { photos ->
@@ -78,6 +84,7 @@ class BookmarksFragment : Fragment() , OnPhotoClickListener{
         super.onPause()
         viewModel.allPhotos.removeObservers(viewLifecycleOwner)
     }
+
     private fun onEmptyPhotoList() {
         if (viewModel.allPhotos.value?.isEmpty() == true) {
             binding.mainBookmarksLayout.visibility = View.GONE

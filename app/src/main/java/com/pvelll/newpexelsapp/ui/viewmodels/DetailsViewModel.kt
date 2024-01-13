@@ -77,7 +77,7 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
     fun downloadPhoto() {
         viewModelScope.launch {
             val directory =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val file = File(directory, "${photo.value?.id}.jpeg")
             try {
                 photo.value?.let {
