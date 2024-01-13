@@ -211,14 +211,9 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 if(viewModel.isNetworkAvailable.value == true){
                     if (newText != selectedTitle) {
                         selectedTitle = null
-                        selectedView!!.background = context?.let { it1 ->
-                            ContextCompat.getDrawable(
-                                it1,
-                                R.drawable.gallery_selector
-                            )
-                        }
-                        selectedView!!.findViewById<TextView>(R.id.featured_topic_text)
-                            .setTextColor(resources.getColor(R.color.text))
+                        selectedView?.background = resources.getDrawable(R.drawable.gallery_selector)
+                        selectedView?.findViewById<TextView>(R.id.featured_topic_text)
+                            ?.setTextColor(resources.getColor(R.color.text))
                     }
                 }
                 return false
