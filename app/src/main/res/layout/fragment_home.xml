@@ -30,11 +30,6 @@
             android:background="@color/background"
             app:layout_scrollFlags="scroll|enterAlways">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/search_bar"
                     android:layout_width="match_parent"
@@ -47,8 +42,6 @@
                     app:iconifiedByDefault="false"
                     app:queryBackground="@null"
                     app:searchIcon="@drawable/ic_search" />
-
-            </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -134,7 +127,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
         android:id="@+id/no_network_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -151,18 +144,17 @@
                 android:id="@+id/no_network_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_no_network"/>
+                android:src="@drawable/ic_no_network" />
 
             <ImageView
                 android:id="@+id/try_again_button"
                 android:layout_width="wrap_content"
+                android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:src="@drawable/try_again"
-                android:textStyle="bold"
-                android:textColor="@color/red"/>
+                android:layout_marginTop="12dp"
+                android:src="@drawable/try_again" />
         </LinearLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
