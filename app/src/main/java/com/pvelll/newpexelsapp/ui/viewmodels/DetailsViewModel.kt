@@ -55,21 +55,25 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun saveToBookmarks() {
-        viewModelScope.launch {
-            val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
-            try {
-                if (file.exists()) {
-                    _errorMessage.value = "Photo exists"
-                } else {
-                    photo.value?.let {
-                        downloadImage(it.src.original, file)
-                        db.photoDao().insert(it)
-                        _isBookmarked.value = true
-                        _errorMessage.value = "Photo successfully saved to bookmarks"
+        if (_isBookmarked.value == true) {
+            removeFromBookmarks()
+        } else {
+            viewModelScope.launch {
+                val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
+                try {
+                    if (file.exists()) {
+                        _errorMessage.value = "Photo exists"
+                    } else {
+                        photo.value?.let {
+                            downloadImage(it.src.large2x, file)
+                            db.photoDao().insert(it)
+                            _isBookmarked.value = true
+                            _errorMessage.value = "Photo successfully saved to bookmarks"
+                        }
                     }
+                } catch (e: IOException) {
+                    _errorMessage.value = "Error saving photo"
                 }
-            } catch (e: IOException) {
-                _errorMessage.value = "Error saving photo"
             }
         }
     }
@@ -89,6 +93,20 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+    private fun removeFromBookmarks() {
+        viewModelScope.launch {
+            photo.value?.let { photo ->
+                db.photoDao().delete(photo)
+                val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.id}.jpeg")
+                if (file.exists()) {
+                    file.delete()
+                }
+                _isBookmarked.value = false
+                _errorMessage.value = "Photo removed from bookmarks"
+            }
+        }
+    }
+
 
     private suspend fun getPhotoFromDB(id: Int): Photo? {
         return db.photoDao().getById(id)

@@ -87,7 +87,6 @@ class BookmarksRecyclerViewAdapter(
             val file = File(context.getExternalFilesDir(null), "${photo.id}.jpeg")
             Glide.with(context)
                 .load(file)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .placeholder(R.drawable.default_card_image)
                 .into(binding.photoImage)
         }

@@ -105,6 +105,7 @@ class DetailsFragment() : Fragment() {
         }
     }
 
+
     private fun onImageNotFound() {
         binding.saveDownloadLayout.visibility = View.GONE
         binding.pictureCardView.visibility = View.GONE
