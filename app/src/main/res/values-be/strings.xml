@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Хатні экран</string>
+    <string name="bookmarks">Закладка</string>
+    <string name="picture">Карцінка</string>
+    <string name="download">Скачаць</string>
+    <string name="try_again">Паспрабаваць зноў</string>
+    <string name="explore">У пошукі!</string>
+    <string name="no_results_found">Нічога не знойдзена</string>
+    <string name="you_haven_t_saved_anything_yet">Вы нічога не захавалі</string>
+    <string name="image_not_found">Фота не знойдзена</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Главная</string>
+    <string name="bookmarks">Закладки</string>
+    <string name="picture">Картинка</string>
+    <string name="download">Скачать</string>
+    <string name="try_again">Попробовать снова</string>
+    <string name="explore">Постичь просторы Pexels!</string>
+    <string name="no_results_found">Ничего не найдено</string>
+    <string name="you_haven_t_saved_anything_yet">Ничего не сохранено</string>
+    <string name="image_not_found">Фотография не найдена</string>
+</resources>
