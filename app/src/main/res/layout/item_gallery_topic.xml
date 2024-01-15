@@ -12,9 +12,11 @@
         android:layout_centerInParent="true"
         android:paddingLeft="20dp"
         android:layout_gravity="center"
+        android:fontFamily="@font/mulish"
         android:paddingTop="10dp"
         android:paddingRight="20dp"
+        android:textStyle="bold"
         android:paddingBottom="10dp"
         android:textColor="@color/text"
-        android:text="Shopping" />
+        android:text="@string/shopping" />
 </RelativeLayout>

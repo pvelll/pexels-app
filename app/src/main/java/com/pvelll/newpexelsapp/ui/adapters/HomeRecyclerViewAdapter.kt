@@ -77,7 +77,7 @@ class HomeRecyclerViewAdapter(
                 true
             }
             Glide.with(itemView)
-                .load(photo.src.large2x)
+                .load(photo.src.medium)
                 .placeholder(R.drawable.default_card_image)
                 .into(binding.photoImage)
         }

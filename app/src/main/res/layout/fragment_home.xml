@@ -111,16 +111,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No results found"
+                    android:text="@string/no_results_found"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <ImageView
+                <TextView
                     android:id="@+id/explore_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:src="@drawable/explore" />
+                    android:text="@string/explore"
+                    android:textSize="18sp"
+                    android:textColor="@color/red"
+                    android:fontFamily="@font/mulish"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 
@@ -144,15 +148,20 @@
                 android:id="@+id/no_network_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_no_network" />
+                android:src="@drawable/ic_no_network"
+                android:contentDescription="@string/no_network_image" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/try_again_button"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:src="@drawable/try_again" />
+                android:text="@string/try_again"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:fontFamily="@font/mulish"/>
         </LinearLayout>
     </LinearLayout>
 

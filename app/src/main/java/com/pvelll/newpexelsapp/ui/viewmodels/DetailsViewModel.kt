@@ -62,7 +62,7 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
                     _errorMessage.value = "Photo exists"
                 } else {
                     photo.value?.let {
-                        downloadImage(it.src.large2x, file)
+                        downloadImage(it.src.original, file)
                         db.photoDao().insert(it)
                         _isBookmarked.value = true
                         _errorMessage.value = "Photo successfully saved to bookmarks"
@@ -81,7 +81,7 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
             val file = File(directory, "${photo.value?.id}.jpeg")
             try {
                 photo.value?.let {
-                    downloadImage(it.src.large2x, file)
+                    downloadImage(it.src.original, file)
                     _errorMessage.value = "Photo downloaded"
                 }
             } catch (e: IOException) {
