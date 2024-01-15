@@ -58,23 +58,28 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
         if (_isBookmarked.value == true) {
             removeFromBookmarks()
         } else {
-            viewModelScope.launch {
-                val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
-                try {
-                    if (file.exists()) {
-                        _errorMessage.value = "Photo exists"
-                    } else {
-                        photo.value?.let {
-                            downloadImage(it.src.large2x, file)
-                            db.photoDao().insert(it)
-                            _isBookmarked.value = true
-                            _errorMessage.value = "Photo successfully saved to bookmarks"
+            if(_isNetworkAvailable.value == connectivityObserver.isConnected()){
+                viewModelScope.launch {
+                    val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
+                    try {
+                        if (file.exists()) {
+                            _errorMessage.value = "Photo exists"
+                        } else {
+                            photo.value?.let {
+                                downloadImage(it.src.large2x, file)
+                                db.photoDao().insert(it)
+                                _isBookmarked.value = true
+                                _errorMessage.value = "Photo successfully saved to bookmarks"
+                            }
                         }
+                    } catch (e: IOException) {
+                        _errorMessage.value = "Error saving photo"
                     }
-                } catch (e: IOException) {
-                    _errorMessage.value = "Error saving photo"
                 }
+            } else {
+                _errorMessage.value = "No internet connection"
             }
+
         }
     }
 

@@ -15,4 +15,6 @@
     <string name="you_haven_t_saved_anything_yet">You haven\'t saved anything yet</string>
     <string name="back_to_home">back to home</string>
     <string name="shopping">Shopping</string>
+    <string name="image_not_found">Image not found</string>
+    <string name="tap_here_to_download">tap here to download</string>
 </resources>

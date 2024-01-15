@@ -41,36 +41,40 @@
         android:layout_above="@+id/save_download_layout"
         android:layout_below="@id/header">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/on_error_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center"
+                android:layout_height="593dp"
+                android:gravity="center"
                 android:visibility="gone">
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <TextView
+                    android:id="@+id/error_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
                     android:contentDescription="@string/shows_text_from_figma"
-                    android:src="@drawable/image_not_found" />
+                    android:fontFamily="@font/mulish"
+                    android:text="@string/image_not_found"
+                    android:textColor="@color/text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/explore_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/imageView"
-                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="24dp"
                     android:contentDescription="@string/redirects_to_main"
                     android:fontFamily="@font/mulish"
                     android:text="@string/explore"
+                    android:textColor="@color/red"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -85,6 +89,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/default_card_image"
                 android:backgroundTint="@color/gray"
+                android:visibility="visible"
                 app:cardCornerRadius="25dp">
 
                 <com.pvelll.newpexelsapp.ui.utils.ZoomableImageView
@@ -99,7 +104,7 @@
 
             </androidx.cardview.widget.CardView>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 
@@ -123,6 +128,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@drawable/download_button_shape"
+                android:contentDescription="@string/tap_here_to_download"
                 android:src="@drawable/ic_download" />
 
             <TextView
