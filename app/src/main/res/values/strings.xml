@@ -8,4 +8,13 @@
     <string name="redirects_to_main">Redirects to main</string>
     <string name="shows_text_from_figma">shows text\n</string>
     <string name="author_name">Author Name</string>
+    <string name="try_again">Try again</string>
+    <string name="no_network_image">no_network_image</string>
+    <string name="explore">Explore</string>
+    <string name="no_results_found">No results found</string>
+    <string name="you_haven_t_saved_anything_yet">You haven\'t saved anything yet</string>
+    <string name="back_to_home">back to home</string>
+    <string name="shopping">Shopping</string>
+    <string name="image_not_found">Image not found</string>
+    <string name="tap_here_to_download">tap here to download</string>
 </resources>

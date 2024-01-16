@@ -29,6 +29,8 @@
         android:background="#80000000"
         android:gravity="center"
         android:padding="8dp"
+        android:fontFamily="@font/mulish"
+        android:textSize="16sp"
         android:text="@string/author_name"
         android:textColor="@android:color/white" />
 </androidx.cardview.widget.CardView>

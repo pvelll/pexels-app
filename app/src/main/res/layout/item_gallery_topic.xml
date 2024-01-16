@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="45dp"
+    android:gravity="center"
     android:background="@drawable/gallery_selector">
 
     <TextView
         android:id="@+id/featured_topic_text"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:paddingLeft="20dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/mulish"
         android:paddingTop="10dp"
         android:paddingRight="20dp"
+        android:textStyle="bold"
         android:paddingBottom="10dp"
         android:textColor="@color/text"
-        android:text="Drawing" />
+        android:text="@string/shopping" />
 </RelativeLayout>

@@ -55,33 +55,42 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun saveToBookmarks() {
-        viewModelScope.launch {
-            val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
-            try {
-                if (file.exists()) {
-                    _errorMessage.value = "Photo exists"
-                } else {
-                    photo.value?.let {
-                        downloadImage(it.src.large2x, file)
-                        db.photoDao().insert(it)
-                        _isBookmarked.value = true
-                        _errorMessage.value = "Photo successfully saved to bookmarks"
+        if (_isBookmarked.value == true) {
+            removeFromBookmarks()
+        } else {
+            if(_isNetworkAvailable.value == connectivityObserver.isConnected()){
+                viewModelScope.launch {
+                    val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
+                    try {
+                        if (file.exists()) {
+                            _errorMessage.value = "Photo exists"
+                        } else {
+                            photo.value?.let {
+                                downloadImage(it.src.large2x, file)
+                                db.photoDao().insert(it)
+                                _isBookmarked.value = true
+                                _errorMessage.value = "Photo successfully saved to bookmarks"
+                            }
+                        }
+                    } catch (e: IOException) {
+                        _errorMessage.value = "Error saving photo"
                     }
                 }
-            } catch (e: IOException) {
-                _errorMessage.value = "Error saving photo"
+            } else {
+                _errorMessage.value = "No internet connection"
             }
+
         }
     }
 
     fun downloadPhoto() {
         viewModelScope.launch {
             val directory =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val file = File(directory, "${photo.value?.id}.jpeg")
             try {
                 photo.value?.let {
-                    downloadImage(it.src.large2x, file)
+                    downloadImage(it.src.original, file)
                     _errorMessage.value = "Photo downloaded"
                 }
             } catch (e: IOException) {
@@ -89,6 +98,20 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+    private fun removeFromBookmarks() {
+        viewModelScope.launch {
+            photo.value?.let { photo ->
+                db.photoDao().delete(photo)
+                val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.id}.jpeg")
+                if (file.exists()) {
+                    file.delete()
+                }
+                _isBookmarked.value = false
+                _errorMessage.value = "Photo removed from bookmarks"
+            }
+        }
+    }
+
 
     private suspend fun getPhotoFromDB(id: Int): Photo? {
         return db.photoDao().getById(id)

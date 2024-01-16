@@ -58,6 +58,11 @@ class DetailsFragment() : Fragment() {
         binding.downloadButton.setOnClickListener {
             viewModel.downloadPhoto()
         }
+
+        binding.exploreButton.setOnClickListener{
+            val action = DetailsFragmentDirections.actionDetailsFragmentToHomeFragment()
+            findNavController().navigate(action)
+        }
     }
 
 
@@ -104,6 +109,7 @@ class DetailsFragment() : Fragment() {
 
         }
     }
+
 
     private fun onImageNotFound() {
         binding.saveDownloadLayout.visibility = View.GONE

@@ -16,7 +16,7 @@ class ZoomableImageView @JvmOverloads constructor(
 ) : androidx.appcompat.widget.AppCompatImageView(context, attrs, defStyleAttr) {
 
     private var matrix: Matrix = Matrix()
-    private var scaleFactor = 1f
+    private var scaleFactor = 0f
     private val maxScale = 3.0f
     private val minScale = 1.0f
     private var isScaling = false

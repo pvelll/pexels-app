@@ -22,6 +22,7 @@
             android:text="@string/bookmarks"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:fontFamily="@font/mulish"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -67,16 +68,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You haven't saved anything yet"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textStyle="bold"
+                android:fontFamily="@font/mulish"
+                android:text="@string/you_haven_t_saved_anything_yet"
+                android:textColor="@color/text"
+                android:textSize="16sp" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/explore_button_bookmarks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:src="@drawable/explore"
+                android:text="@string/explore"
+                android:fontFamily="@font/mulish"
+                android:textSize="18sp"
                 android:textColor="@color/red"
                 android:textStyle="bold" />
         </LinearLayout>
