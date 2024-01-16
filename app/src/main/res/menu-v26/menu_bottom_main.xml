@@ -10,4 +10,8 @@
         android:icon="@drawable/bookmarks_selector"
         android:iconTint="@null"
         android:title="@string/bookmarks" />
+    <item
+        android:id="@+id/videosFragment"
+        android:icon="@drawable/videos_selector"
+        android:title="@string/videos" />
 </menu>
