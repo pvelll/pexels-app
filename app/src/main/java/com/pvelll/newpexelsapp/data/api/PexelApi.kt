@@ -4,6 +4,7 @@ import com.pvelll.newpexelsapp.domain.models.CuratedPhotosResponse
 import com.pvelll.newpexelsapp.domain.models.PhotoGalleryResponse
 import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.domain.models.PhotosResponse
+import com.pvelll.newpexelsapp.domain.models.VideoResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -23,17 +24,24 @@ interface PexelApi {
 
     @GET("collections/featured")
     suspend fun getPhotoGallery(
-        @Query("per_page") perPage: Int = 7,
+        @Query("per_page") perPage: Int = 7
     ): Response<PhotoGalleryResponse>
 
     @GET("curated")
     suspend fun getCuratedPictures(
-        @Query("per_page") perPage: Int = 30,
+        @Query("per_page") perPage: Int = 30
     ): Response<CuratedPhotosResponse>
 
     @GET("photos/{id}")
     suspend fun getPhotoById(
-        @Path("id") id: Int,
+        @Path("id") id: Int
     ): Response<Photo>
 
+    @GET("videos/search")
+    suspend fun getVideos(
+        @Query("query") query: String = "popular",
+        @Query("orientation") orientation: String = "portrait",
+        @Query("size") size : String = "medium",
+        @Query("per_page") perPage: Int = 80
+    ) : Response<VideoResponse>
 }

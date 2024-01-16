@@ -47,7 +47,7 @@
             app:destination="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/videosFragment2"
+        android:id="@+id/videosFragment"
         android:name="com.pvelll.newpexelsapp.ui.fragments.VideosFragment"
         android:label="fragment_videos"
         tools:layout="@layout/fragment_videos" />
