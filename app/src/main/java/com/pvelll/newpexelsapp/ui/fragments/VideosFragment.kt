@@ -9,7 +9,8 @@ import android.view.ViewGroup
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.ui.viewmodels.VideosViewModel
 
-class VideosFragment : Fragment() {
+
+class VideosFragment : Fragment() {//TODO: for videos use exoplayer
 
     companion object {
         fun newInstance() = VideosFragment()
