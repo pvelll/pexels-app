@@ -1,20 +1,27 @@
 <resources>
-    <string name="app_name">NewPexelsApp</string>
+    <string name="app_name" translatable="false">NewPexelsApp</string>
     <string name="home">Home</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="picture">Picture</string>
-    <string name="saves_in_bookmarks">Save in Bookmarks\n</string>
+    <string name="saves_in_bookmarks" translatable="false">Save in Bookmarks\n</string>
     <string name="download">Download</string>
-    <string name="redirects_to_main">Redirects to main</string>
-    <string name="shows_text_from_figma">shows text\n</string>
-    <string name="author_name">Author Name</string>
+    <string name="redirects_to_main" translatable="false">Redirects to main</string>
+    <string name="shows_text_from_figma" translatable="false">shows text\n</string>
+    <string name="author_name" translatable="false">Author Name</string>
     <string name="try_again">Try again</string>
-    <string name="no_network_image">no_network_image</string>
+    <string name="no_network_image" translatable="false">no_network_image</string>
     <string name="explore">Explore</string>
     <string name="no_results_found">No results found</string>
     <string name="you_haven_t_saved_anything_yet">You haven\'t saved anything yet</string>
-    <string name="back_to_home">back to home</string>
-    <string name="shopping">Shopping</string>
+    <string name="back_to_home" translatable="false">back to home</string>
+    <string name="shopping" translatable="false">Shopping</string>
     <string name="image_not_found">Image not found</string>
-    <string name="tap_here_to_download">tap here to download</string>
+    <string name="tap_here_to_download" translatable="false">tap here to download</string>
+    <string name="photo_exists">Photo exists</string>
+    <string name="photo_successfully_saved_bookmarks">Photo successfully saved to bookmarks</string>
+    <string name="error_saving_photo">Error saving photo</string>
+    <string name="photo_downloaded">Photo Downloaded</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="photo_removed_from_bookmarks">Photo removed from bookmarks</string>
+
 </resources>

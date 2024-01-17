@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
+import com.pvelll.newpexelsapp.data.repository.PhotoStorageRepositoryImpl
 import com.pvelll.newpexelsapp.databinding.ItemPictureBinding
 import com.pvelll.newpexelsapp.domain.usecases.OnPhotoClickListener
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +58,7 @@ class HomeRecyclerViewAdapter(
 
     class PhotoViewHolder(private val binding: ItemPictureBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val db by inject<PhotoDatabase>(PhotoDatabase::class.java)
+        private val photoStorageRepo = PhotoStorageRepositoryImpl()
         fun bind(photo: Photo) {
             binding.authorName.visibility = View.GONE
             binding.photoCardView.setOnLongClickListener {
@@ -68,7 +69,7 @@ class HomeRecyclerViewAdapter(
                         showToast("photo exists")
                     } else {
                         try {
-                            savePhoto(file, photo)
+                            photoStorageRepo.saveToBookmarks(photo,file)
                         } catch (e: IOException) {
                             showToast("error")
                         }
@@ -80,17 +81,6 @@ class HomeRecyclerViewAdapter(
                 .load(photo.src.medium)
                 .placeholder(R.drawable.default_card_image)
                 .into(binding.photoImage)
-        }
-
-        private suspend fun savePhoto(file: File, photo: Photo) {
-            val bytes = URL(photo.src.large2x).readBytes()
-            val outputStream = FileOutputStream(file)
-            Log.d("Saving photo", "photo saved")
-            outputStream.use {
-                it.write(bytes)
-            }
-            db.photoDao().insert(photo)
-            showToast("successfully added to bookmarks")
         }
 
         private suspend fun showToast(message: String) {
