@@ -13,17 +13,24 @@ import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.data.repository.DatabaseRepositoryImpl
 import com.pvelll.newpexelsapp.ui.adapters.BookmarksRecyclerViewAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
 class BookmarksViewModel( private val application: Application) : AndroidViewModel(application) {
-    private val dataBase by inject<PhotoDatabase>(PhotoDatabase::class.java)
     private val repository : DatabaseRepositoryImpl
-        get() = DatabaseRepositoryImpl(dataBase.photoDao())
+        get() = DatabaseRepositoryImpl()
     private var loading: MutableLiveData<Boolean> = MutableLiveData()
     var loadingProgress: MutableLiveData<Int> = MutableLiveData(0)
-    val allPhotos: LiveData<List<Photo>> = repository.getPhotos()
+    var allPhotos: LiveData<List<Photo>> = MutableLiveData()
     private lateinit var pictureAdapter: BookmarksRecyclerViewAdapter
 
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            allPhotos = repository.getPhotos()
+        }
+    }
 
     private val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
