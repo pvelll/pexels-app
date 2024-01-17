@@ -11,10 +11,9 @@
     <string name="image_not_found">Фотография не найдена</string>
     <string name="photo_exists">Фотография уже сохранена</string>
     <string name="photo_successfully_saved_bookmarks">Фотография успешно сохранена в закладки</string>
-    <string name="photo_successfully_saved_bookmarks">Ф</string>
     <string name="error_saving_photo">Ошибка при сохранении фотографии</string>
     <string name="photo_downloaded">Фотография скачана</string>
     <string name="no_internet">Нету подключения к сети</string>
-    <string name="no_internet">Н</string>
     <string name="photo_removed_from_bookmarks">Фотография удалена из закладок</string>
+    <string name="search">Поиск</string>
 </resources>
