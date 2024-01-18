@@ -1,5 +1,6 @@
 package com.pvelll.newpexelsapp.ui.adapters
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
+import com.pvelll.newpexelsapp.data.repository.PhotoStorageRepositoryImpl
 import com.pvelll.newpexelsapp.databinding.ItemPictureBinding
 import com.pvelll.newpexelsapp.domain.usecases.OnPhotoClickListener
 import kotlinx.coroutines.CoroutineScope
@@ -25,11 +27,12 @@ import java.net.URL
 
 class HomeRecyclerViewAdapter(
     private val listener: OnPhotoClickListener,
+    private val context: Context
 ) : RecyclerView.Adapter<HomeRecyclerViewAdapter.PhotoViewHolder>() {
     private var photoList = mutableListOf<Photo>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding = ItemPictureBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PhotoViewHolder(binding)
+        return PhotoViewHolder(binding, context)
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
@@ -55,9 +58,9 @@ class HomeRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    class PhotoViewHolder(private val binding: ItemPictureBinding) :
+    class PhotoViewHolder(private val binding: ItemPictureBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
-        private val db by inject<PhotoDatabase>(PhotoDatabase::class.java)
+        private val photoStorageRepo = PhotoStorageRepositoryImpl()
         fun bind(photo: Photo) {
             binding.authorName.visibility = View.GONE
             binding.photoCardView.setOnLongClickListener {
@@ -65,12 +68,12 @@ class HomeRecyclerViewAdapter(
                     val file =
                         File(binding.root.context.getExternalFilesDir(null), "${photo.id}.jpeg")
                     if (file.exists()) {
-                        showToast("photo exists")
+                        showToast(context.resources.getString(R.string.photo_exists))
                     } else {
                         try {
-                            savePhoto(file, photo)
+                            photoStorageRepo.saveToBookmarks(photo,file)
                         } catch (e: IOException) {
-                            showToast("error")
+                            showToast(context.resources.getString(R.string.error_saving_photo))
                         }
                     }
                 }
@@ -80,17 +83,6 @@ class HomeRecyclerViewAdapter(
                 .load(photo.src.medium)
                 .placeholder(R.drawable.default_card_image)
                 .into(binding.photoImage)
-        }
-
-        private suspend fun savePhoto(file: File, photo: Photo) {
-            val bytes = URL(photo.src.large2x).readBytes()
-            val outputStream = FileOutputStream(file)
-            Log.d("Saving photo", "photo saved")
-            outputStream.use {
-                it.write(bytes)
-            }
-            db.photoDao().insert(photo)
-            showToast("successfully added to bookmarks")
         }
 
         private suspend fun showToast(message: String) {

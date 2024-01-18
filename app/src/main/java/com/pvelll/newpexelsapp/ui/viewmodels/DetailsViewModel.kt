@@ -1,17 +1,21 @@
 package com.pvelll.newpexelsapp.ui.viewmodels
 
 import android.app.Application
+import android.media.tv.interactive.AppLinkInfo
 import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
+import com.pvelll.newpexelsapp.data.repository.DatabaseRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotoByIdRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.PhotoStorageRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,8 +26,11 @@ import java.io.IOException
 import java.net.URL
 
 class DetailsViewModel(application: Application) : AndroidViewModel(application) {
-    private val db by inject<PhotoDatabase>(PhotoDatabase::class.java)
-    private val connectivityObserver by inject<NetworkConnectivityObserver>(NetworkConnectivityObserver::class.java)
+    private val databaseRepo = DatabaseRepositoryImpl()
+    private val photoStorageRepo = PhotoStorageRepositoryImpl()
+    private val connectivityObserver by inject<NetworkConnectivityObserver>(
+        NetworkConnectivityObserver::class.java
+    )
 
     private val _photo = MutableLiveData<Photo>()
     val photo: LiveData<Photo>
@@ -49,7 +56,7 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
 
     private fun checkPhotoSaved() {
         viewModelScope.launch {
-            val existingPhoto = photo.value?.let { getPhotoFromDB(it.id) }
+            val existingPhoto = photo.value?.let { databaseRepo.getPhoto(it.id) }
             _isBookmarked.value = existingPhoto != null
         }
     }
@@ -58,26 +65,31 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
         if (_isBookmarked.value == true) {
             removeFromBookmarks()
         } else {
-            if(_isNetworkAvailable.value == connectivityObserver.isConnected()){
+            if (_isNetworkAvailable.value == connectivityObserver.isConnected()) {
                 viewModelScope.launch {
-                    val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.value?.id}.jpeg")
+                    val file = File(
+                        getApplication<Application>().getExternalFilesDir(null),
+                        "${photo.value?.id}.jpeg"
+                    )
                     try {
                         if (file.exists()) {
-                            _errorMessage.value = "Photo exists"
+                            _errorMessage.value = getApplication<Application>().resources.getString(
+                                R.string.photo_exists
+                            )
                         } else {
                             photo.value?.let {
-                                downloadImage(it.src.large2x, file)
-                                db.photoDao().insert(it)
+                                photoStorageRepo.saveToBookmarks(it, file)
                                 _isBookmarked.value = true
-                                _errorMessage.value = "Photo successfully saved to bookmarks"
+                                _errorMessage.value =
+                                    getApplication<Application>().resources.getString(R.string.photo_successfully_saved_bookmarks)
                             }
                         }
                     } catch (e: IOException) {
-                        _errorMessage.value = "Error saving photo"
+                        _errorMessage.value = getApplication<Application>().resources.getString(R.string.error_saving_photo)
                     }
                 }
             } else {
-                _errorMessage.value = "No internet connection"
+                _errorMessage.value = getApplication<Application>().resources.getString(R.string.no_internet)
             }
 
         }
@@ -90,38 +102,28 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
             val file = File(directory, "${photo.value?.id}.jpeg")
             try {
                 photo.value?.let {
-                    downloadImage(it.src.original, file)
-                    _errorMessage.value = "Photo downloaded"
+                    photoStorageRepo.downloadPhoto(it.src.original, file)
+                    _errorMessage.value = getApplication<Application>().resources.getString(R.string.photo_downloaded)
+
                 }
             } catch (e: IOException) {
-                _errorMessage.value = "Error downloading photo"
+                _errorMessage.value = getApplication<Application>().resources.getString(R.string.error_saving_photo)
             }
         }
     }
+
     private fun removeFromBookmarks() {
         viewModelScope.launch {
             photo.value?.let { photo ->
-                db.photoDao().delete(photo)
-                val file = File(getApplication<Application>().getExternalFilesDir(null), "${photo.id}.jpeg")
-                if (file.exists()) {
-                    file.delete()
-                }
+                val file = File(
+                    getApplication<Application>().getExternalFilesDir(null),
+                    "${photo.id}.jpeg"
+                )
+                photoStorageRepo.removePhoto(photo, file)
                 _isBookmarked.value = false
-                _errorMessage.value = "Photo removed from bookmarks"
+                _errorMessage.value = getApplication<Application>().resources.getString(R.string.photo_removed_from_bookmarks)
             }
         }
     }
 
-
-    private suspend fun getPhotoFromDB(id: Int): Photo? {
-        return db.photoDao().getById(id)
-    }
-
-    private fun downloadImage(url: String, file: File) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val bytes = URL(url).readBytes()
-            val outputStream = FileOutputStream(file)
-            outputStream.use { it.write(bytes) }
-        }
-    }
 }

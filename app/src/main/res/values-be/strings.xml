@@ -9,4 +9,11 @@
     <string name="no_results_found">Нічога не знойдзена</string>
     <string name="you_haven_t_saved_anything_yet">Вы нічога не захавалі</string>
     <string name="image_not_found">Фота не знойдзена</string>
+    <string name="photo_exists">Такое фота ёсць</string>
+    <string name="photo_successfully_saved_bookmarks">Фота паспяхова захавана ў закладкі</string>
+    <string name="error_saving_photo">Памылка захавання фота</string>
+    <string name="photo_downloaded">Фота спампавана</string>
+    <string name="no_internet">Няма падключэння да інтэрнэту</string>
+    <string name="photo_removed_from_bookmarks">Фота выдалена з закладак</string>
+    <string name="search">Пошук</string>
 </resources>
