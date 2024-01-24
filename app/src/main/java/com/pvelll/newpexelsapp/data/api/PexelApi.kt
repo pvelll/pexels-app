@@ -37,7 +37,7 @@ interface PexelApi {
         @Path("id") id: Int
     ): Response<Photo>
 
-    @GET("videos/search")
+    @GET("videos/search/")
     suspend fun getVideos(
         @Query("query") query: String = "popular",
         @Query("orientation") orientation: String = "portrait",

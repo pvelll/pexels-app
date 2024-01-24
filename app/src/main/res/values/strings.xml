@@ -23,5 +23,6 @@
     <string name="photo_downloaded">Photo Downloaded</string>
     <string name="no_internet">No internet connection</string>
     <string name="photo_removed_from_bookmarks">Photo removed from bookmarks</string>
+    <string name="videos">Vidoes</string>
 
 </resources>
