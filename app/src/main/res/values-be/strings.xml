@@ -15,4 +15,5 @@
     <string name="photo_downloaded">Фота спампавана</string>
     <string name="no_internet">Няма падключэння да інтэрнэту</string>
     <string name="photo_removed_from_bookmarks">Фота выдалена з закладак</string>
+    <string name="search">Пошук</string>
 </resources>

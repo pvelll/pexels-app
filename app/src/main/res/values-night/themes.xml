@@ -4,8 +4,9 @@
 
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-
+        <item name="colorPrimary">@color/dark_gray</item>
     </style>
-    <style name="Theme.NewPexelsApp" parent="Base.Theme.NewPexelsApp"/>
+
+    <style name="Theme.NewPexelsApp" parent="Base.Theme.NewPexelsApp" />
 
 </resources>

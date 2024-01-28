@@ -65,7 +65,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         if (viewModel.isNetworkAvailable.value == false) {
             binding.mainHomeLayout.visibility = View.GONE
             binding.noNetworkLayout.visibility = View.VISIBLE
-            Toast.makeText(requireContext(), "No network connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), resources.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -181,7 +181,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     }
 
     private fun setupListeners() {
-        binding.searchBar.queryHint = "Search"
+        binding.searchBar.queryHint = resources.getString(R.string.search)
         binding.searchBar.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             private var handler = Handler(Looper.getMainLooper())
@@ -230,7 +230,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 binding.noNetworkLayout.visibility = View.GONE
                 binding.mainHomeLayout.visibility = View.VISIBLE
             } else {
-                Toast.makeText(requireContext(), "No network connection", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), resources.getText(R.string.no_internet), Toast.LENGTH_SHORT).show()
             }
         }
         binding.exploreButton.setOnClickListener {

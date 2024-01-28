@@ -45,9 +45,15 @@ class VideosFragment : Fragment() {//TODO: for videos use exoplayer
         setupObservers()
         setupRecyclerView()
     }
+
+
+
     private fun setVideos(videos : ArrayList<Video>){
         videoPicAdapter.setVideoData(videos)
     }
+
+
+
     private fun setupObservers() {
         viewModel.videosList.observe(viewLifecycleOwner, Observer {
             if (it != null) {

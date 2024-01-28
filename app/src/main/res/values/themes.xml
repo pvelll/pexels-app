@@ -3,6 +3,7 @@
     <style name="Base.Theme.NewPexelsApp" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/dark_gray</item>
     </style>
     <style name="Theme.NewPexelsApp" parent="Base.Theme.NewPexelsApp"/>
 

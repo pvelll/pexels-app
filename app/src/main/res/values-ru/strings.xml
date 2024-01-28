@@ -14,5 +14,6 @@
     <string name="error_saving_photo">Ошибка при сохранении фотографии</string>
     <string name="photo_downloaded">Фотография скачана</string>
     <string name="no_internet">Нету подключения к сети</string>
+    <string name="search">Поиск</string>
     <string name="photo_removed_from_bookmarks">Фотография удалена из закладок</string>
 </resources>
