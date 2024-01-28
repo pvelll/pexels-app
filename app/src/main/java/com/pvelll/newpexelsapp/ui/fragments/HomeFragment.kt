@@ -101,7 +101,6 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                         )
                     }
                 previousTextView?.setTextColor(resources.getColor(R.color.text))
-
                 selectedView = newItem
                 binding.searchBar.setQuery(item.title, false)
                 viewModel.currentQuery.value = item.title
@@ -225,7 +224,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                     viewModel.getPicture(searchQuery)
                 } else {
                     viewModel.getCuratedPhotos()
-                    viewModel.getGalleries()
+//                    viewModel.getGalleries()
                 }
                 binding.noNetworkLayout.visibility = View.GONE
                 binding.mainHomeLayout.visibility = View.VISIBLE
