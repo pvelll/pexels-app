@@ -87,6 +87,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     }
 
     private fun setGalleries(items: ArrayList<Collection>) {
+        binding.scrollLinearLayout.removeAllViews()
         items.forEach {
             val item = it
             val newItem: View = layoutInflater.inflate(R.layout.item_gallery_topic, null)
