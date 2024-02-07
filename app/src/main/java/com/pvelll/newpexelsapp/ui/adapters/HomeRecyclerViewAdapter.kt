@@ -37,6 +37,8 @@ class HomeRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         val photo = photoList[position]
+        Glide.with(holder.itemView)
+            .clear(holder.binding.photoImage)
         holder.bind(photo)
         holder.itemView.setOnClickListener {
             listener.onPhotoClick(photo)
@@ -58,7 +60,7 @@ class HomeRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    class PhotoViewHolder(private val binding: ItemPictureBinding, private val context: Context) :
+    class PhotoViewHolder(val binding: ItemPictureBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         private val photoStorageRepo = PhotoStorageRepositoryImpl()
         fun bind(photo: Photo) {

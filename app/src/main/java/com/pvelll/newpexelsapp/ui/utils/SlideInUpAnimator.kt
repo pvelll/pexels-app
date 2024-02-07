@@ -11,6 +11,7 @@ class SlideInUpAnimator : DefaultItemAnimator() {
         holder.itemView.translationY = holder.itemView.height.toFloat()
         holder.itemView.animate()
             .translationY(0f)
+            .setStartDelay(0)
             .setDuration(addDuration)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
@@ -24,6 +25,7 @@ class SlideInUpAnimator : DefaultItemAnimator() {
     override fun animateRemove(holder: RecyclerView.ViewHolder): Boolean {
         holder.itemView.animate()
             .translationY(holder.itemView.height.toFloat())
+            .setStartDelay(0)
             .setDuration(removeDuration)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
@@ -33,5 +35,6 @@ class SlideInUpAnimator : DefaultItemAnimator() {
             .start()
         return true
     }
+
 }
 

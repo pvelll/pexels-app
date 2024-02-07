@@ -17,6 +17,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.model.Collection
@@ -80,13 +82,14 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     }
 
     private fun setPhotos(items: ArrayList<Photo>) {
+        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
         photoAdapter.setPhotoData(items)
         binding.pictureRecyclerView.visibility = View.VISIBLE
         binding.noDataLayout.visibility = View.GONE
-
     }
 
     private fun setGalleries(items: ArrayList<Collection>) {
+        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
         binding.scrollLinearLayout.removeAllViews()
         items.forEach {
             val item = it
@@ -207,7 +210,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                 viewModel.currentQuery.value = newText
                 searchQuery = newText
                 handler.removeCallbacks(runnable)
-                handler.postDelayed(runnable, 500)
+                handler.postDelayed(runnable, 300)
                 if(viewModel.isNetworkAvailable.value == true){
                     if (newText != selectedTitle) {
                         selectedTitle = null
@@ -243,6 +246,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
 
     private fun setupRecyclerView() {
         photoAdapter = context?.let { HomeRecyclerViewAdapter(this, it) }!!
+        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
         binding.pictureRecyclerView.apply {
             adapter = photoAdapter
             itemAnimator = SlideInUpAnimator()
