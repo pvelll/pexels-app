@@ -49,6 +49,10 @@ class HomeRecyclerViewAdapter(
         return photoList.size
     }
 
+    fun getPhotoData() : ArrayList<Photo> {
+        return photoList as ArrayList<Photo>
+    }
+
     fun setPhotoData(photos: List<Photo>) {
         photoList.clear()
         photoList.addAll(photos)
