@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pvelll.newpexelsapp.data.api.PexelApi
+import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.data.repository.CuratedPhotosRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotoGalleryRepositoryImpl
@@ -35,15 +36,12 @@ class HomeViewModel(
     private val photoGalleryRepository: PhotoGalleryRepositoryImpl = PhotoGalleryRepositoryImpl(api)
     private val curatedPhotosRepository: CuratedPhotosRepositoryImpl =
         CuratedPhotosRepositoryImpl(api)
-    private var _pictureList: MutableLiveData<PhotosResponse> = MutableLiveData()
-    val pictureList: LiveData<PhotosResponse>
+    private var _pictureList: MutableLiveData<List<Photo>> = MutableLiveData()
+    val pictureList: LiveData<List<Photo>>
         get() = _pictureList
     private var _galleryList: MutableLiveData<PhotoGalleryResponse> = MutableLiveData()
     val galleryList: LiveData<PhotoGalleryResponse>
         get() = _galleryList
-    private var _curatedPhotosList: MutableLiveData<CuratedPhotosResponse> = MutableLiveData()
-    val curatedPhotosList: LiveData<CuratedPhotosResponse>
-        get() = _curatedPhotosList
     private var _currentQuery: MutableLiveData<String> = MutableLiveData()
     val currentQuery: LiveData<String>
         get() = _currentQuery
@@ -67,7 +65,7 @@ class HomeViewModel(
                 loading.value = true
                 setLadingProgress(0)
                 val response = photosRepository.getPhotos(query)
-                _pictureList.postValue(response)
+                _pictureList.postValue(response.photos)
                 imitateLoading()
                 loading.value = false
                 setLadingProgress(100)
@@ -83,7 +81,7 @@ class HomeViewModel(
                 setLadingProgress(0)
                 try {
                     val response = curatedPhotosRepository.getCuratedPhotos()
-                    _curatedPhotosList.postValue(response)
+                    _pictureList.postValue(response.photos)
                     curatedPhotosLoadStatus.postValue(LoadStatus.SUCCESS)
                 } catch (e: Exception) {
                     curatedPhotosLoadStatus.postValue(LoadStatus.FAILURE)
@@ -93,7 +91,6 @@ class HomeViewModel(
                 setLadingProgress(100)
             } else {
                 curatedPhotosLoadStatus.postValue(LoadStatus.NO_INTERNET)
-                Log.d("myLogs", "ошибка в получении фотки")
             }
         }
     }
@@ -156,7 +153,6 @@ class HomeViewModel(
             } else {
                 getPicture(query)
                 val gallery = _galleryList.value?.collections?.find { it.title.equals(query, ignoreCase = true) }
-
             }
         }
     }

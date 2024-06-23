@@ -59,11 +59,6 @@ class HomeRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun clearPictureData() {
-        photoList.clear()
-        notifyDataSetChanged()
-    }
-
     class PhotoViewHolder(val binding: ItemPictureBinding, private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         private val photoStorageRepo = PhotoStorageRepositoryImpl()

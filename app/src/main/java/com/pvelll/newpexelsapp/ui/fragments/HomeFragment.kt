@@ -38,8 +38,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     private lateinit var viewModel: HomeViewModel
     private lateinit var photoAdapter: HomeRecyclerViewAdapter
     private var _binding: FragmentHomeBinding? = null
-    private val binding
-        get() = _binding!!
+    private val binding get() = _binding!!
     private var selectedView: View? = null
     private var selectedTitle: String? = null
     private var previousSelectedView: View? = null
@@ -58,13 +57,10 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         if (savedInstanceState != null) {
             selectedTitle = arguments?.getString(getString(R.string.selected_title))
             val currentQuery = viewModel.currentQuery.value
-            val photoList = viewModel.pictureList.value?.photos
             if (currentQuery != null) {
                 binding.searchBar.setQuery(currentQuery, false)
             }
-            if (photoList != null) {
-                setPhotos(photoList)
-            }
+            viewModel.pictureList.value?.let { setPhotos(it) }
         }
     }
 
@@ -72,12 +68,20 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        onConnectivityError()
-        binding.scrollLinearLayout.orientation = LinearLayout.HORIZONTAL
-        viewModel.getGalleries()
         setupRecyclerView()
         setupListeners()
         setupObservers()
+
+        savedInstanceState?.let {
+            selectedTitle = it.getString(getString(R.string.selected_title))
+            val currentQuery = it.getString(getString(R.string.current_query))
+            val photoList = it.getParcelableArrayList<Photo>(getString(R.string.photo_list))
+            currentQuery?.let { query -> binding.searchBar.setQuery(query, false) }
+            photoList?.let { list -> setPhotos(list) }
+        } ?: run {
+            onConnectivityError()
+            viewModel.getGalleries()
+        }
     }
 
     private fun onConnectivityError() {
@@ -103,15 +107,12 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     }
 
     private fun setPhotos(items: List<Photo>) {
-        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
         photoAdapter.setPhotoData(items)
         binding.pictureRecyclerView.visibility = View.VISIBLE
         binding.noDataLayout.visibility = View.GONE
     }
 
     private fun setGalleries(items: List<Collection>) {
-        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
-        binding.scrollLinearLayout.removeAllViews()
         items.forEach {
             val item = it
             val newItem: View = layoutInflater.inflate(R.layout.item_gallery_topic, null)
@@ -125,10 +126,11 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                             R.drawable.gallery_selector
                         )
                     }
-                previousTextView?.setTextColor(AppCompatResources.getColorStateList(
-                    context!!,
-                    R.color.text
-                ).defaultColor
+                previousTextView?.setTextColor(
+                    AppCompatResources.getColorStateList(
+                        context!!,
+                        R.color.text
+                    ).defaultColor
                 )
                 selectedView = newItem
                 viewModel.searchByTitle(item.title)
@@ -138,10 +140,11 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                         R.drawable.gallery_item_selected
                     )
                 }
-                textView.setTextColor(AppCompatResources.getColorStateList(
-                    context!!,
-                    R.color.text
-                ).defaultColor
+                textView.setTextColor(
+                    AppCompatResources.getColorStateList(
+                        context!!,
+                        R.color.text
+                    ).defaultColor
                 )
                 previousSelectedView = selectedView
                 previousTextView = textView
@@ -155,8 +158,8 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     private fun setupObservers() {
         viewModel.pictureList.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                if (it.photos.isNotEmpty()) {
-                    setPhotos(it.photos)
+                if (it.isNotEmpty()) {
+                    setPhotos(it)
                 } else {
                     showStub()
                 }
@@ -171,17 +174,6 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         viewModel.galleryList.observe(viewLifecycleOwner, Observer {
             if (it?.collections != null) {
                 setGalleries(it.collections)
-            } else {
-                if (viewModel.isNetworkAvailable.value == false) {
-                    onConnectivityError()
-                } else {
-                    // TODO: another error
-                }
-            }
-        })
-        viewModel.curatedPhotosList.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                setPhotos(it.photos)
             } else {
                 if (viewModel.isNetworkAvailable.value == false) {
                     onConnectivityError()
@@ -283,14 +275,12 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
 
     private fun setupRecyclerView() {
         photoAdapter = context?.let { HomeRecyclerViewAdapter(this, it) }!!
-//        TransitionManager.beginDelayedTransition(binding.root as ViewGroup, AutoTransition())
         binding.pictureRecyclerView.apply {
             adapter = photoAdapter
             itemAnimator = SlideInUpAnimator()
             layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
             setItemViewCacheSize(1000)
         }
-        photoAdapter.clearPictureData()
     }
 
     private fun showStub() {
@@ -312,7 +302,10 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         super.onSaveInstanceState(outState)
         outState.putString(getString(R.string.selected_title), selectedTitle)
         outState.putString(getString(R.string.current_query), binding.searchBar.query.toString())
-        outState.putParcelableArrayList(getString(R.string.photo_list), photoAdapter.getPhotoData())
+        outState.putParcelableArrayList(
+            getString(R.string.photo_list),
+            ArrayList(photoAdapter.getPhotoData())
+        )
     }
 
 
