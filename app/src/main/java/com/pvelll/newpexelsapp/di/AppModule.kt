@@ -7,8 +7,12 @@ import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.data.repository.CuratedPhotosRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.DatabaseRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotoGalleryRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.PhotoStorageRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotosRepositoryImpl
+import com.pvelll.newpexelsapp.ui.viewmodels.BookmarksViewModel
+import com.pvelll.newpexelsapp.ui.viewmodels.DetailsViewModel
 import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
@@ -50,11 +54,23 @@ val repoModule = module {
     single{
         CuratedPhotosRepositoryImpl(get())
     }
+    single {
+        DatabaseRepositoryImpl()
+    }
+    single {
+        PhotoStorageRepositoryImpl()
+    }
 }
 
 val viewModelModule = module {
     viewModel {
         HomeViewModel(get(),get(),get(),get())
+    }
+    viewModel {
+        DetailsViewModel(get(),get(),get())
+    }
+    viewModel {
+        BookmarksViewModel(get())
     }
 }
 

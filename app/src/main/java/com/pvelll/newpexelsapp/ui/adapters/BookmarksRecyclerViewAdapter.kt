@@ -17,8 +17,8 @@ import java.io.File
 
 class BookmarksRecyclerViewAdapter(
     private val listener: OnPhotoClickListener,
+    private val context: Context
 ) : RecyclerView.Adapter<BookmarksRecyclerViewAdapter.PhotoViewHolder>() {
-    lateinit var context: Context
     init {
         setHasStableIds(true)
     }
@@ -38,8 +38,7 @@ class BookmarksRecyclerViewAdapter(
     private val currentList: List<Photo>
         get() = differ.currentList
 
-    fun setPictureData(photoList: ArrayList<Photo>, context: Context) {
-        this.context = context
+    fun setPictureData(photoList: ArrayList<Photo>) {
         differ.submitList(photoList)
     }
     override fun getItemId(position: Int): Long {
@@ -69,10 +68,6 @@ class BookmarksRecyclerViewAdapter(
         holder.itemView.setOnClickListener {
             listener.onPhotoClick(photo)
         }
-    }
-
-    fun clearPictureData() {
-        differ.submitList(null)
     }
 
     override fun getItemCount(): Int {
