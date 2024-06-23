@@ -59,7 +59,7 @@ class DetailsFragment() : Fragment() {
             viewModel.downloadPhoto()
         }
 
-        binding.exploreButton.setOnClickListener{
+        binding.exploreButton.setOnClickListener {
             val action = DetailsFragmentDirections.actionDetailsFragmentToHomeFragment()
             findNavController().navigate(action)
         }

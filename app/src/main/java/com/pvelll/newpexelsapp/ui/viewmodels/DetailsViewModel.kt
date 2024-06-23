@@ -62,36 +62,38 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun saveToBookmarks() {
-        if (_isBookmarked.value == true) {
-            removeFromBookmarks()
-        } else {
-            if (_isNetworkAvailable.value == connectivityObserver.isConnected()) {
-                viewModelScope.launch {
-                    val file = File(
-                        getApplication<Application>().getExternalFilesDir(null),
-                        "${photo.value?.id}.jpeg"
-                    )
-                    try {
-                        if (file.exists()) {
-                            _errorMessage.value = getApplication<Application>().resources.getString(
-                                R.string.photo_exists
-                            )
-                        } else {
-                            photo.value?.let {
-                                photoStorageRepo.saveToBookmarks(it, file)
-                                _isBookmarked.value = true
-                                _errorMessage.value =
-                                    getApplication<Application>().resources.getString(R.string.photo_successfully_saved_bookmarks)
-                            }
-                        }
-                    } catch (e: IOException) {
-                        _errorMessage.value = getApplication<Application>().resources.getString(R.string.error_saving_photo)
-                    }
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            if (_isBookmarked.value == true) {
+                removeFromBookmarks()
             } else {
-                _errorMessage.value = getApplication<Application>().resources.getString(R.string.no_internet)
-            }
+                if (_isNetworkAvailable.value == connectivityObserver.isConnected()) {
+                    viewModelScope.launch {
+                        val file = File(
+                            getApplication<Application>().getExternalFilesDir(null),
+                            "${photo.value?.id}.jpeg"
+                        )
+                        try {
+                            if (file.exists()) {
+                                _errorMessage.value = getApplication<Application>().resources.getString(
+                                    R.string.photo_exists
+                                )
+                            } else {
+                                photo.value?.let {
+                                    photoStorageRepo.saveToBookmarks(it, file)
+                                    _isBookmarked.value = true
+                                    _errorMessage.value =
+                                        getApplication<Application>().resources.getString(R.string.photo_successfully_saved_bookmarks)
+                                }
+                            }
+                        } catch (e: IOException) {
+                            _errorMessage.value = getApplication<Application>().resources.getString(R.string.error_saving_photo)
+                        }
+                    }
+                } else {
+                    _errorMessage.value = getApplication<Application>().resources.getString(R.string.no_internet)
+                }
 
+            }
         }
     }
 

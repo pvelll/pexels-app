@@ -61,7 +61,7 @@ class HomeViewModel(
         getGalleries()
     }
 
-    fun getPicture(query: String) {
+    private fun getPicture(query: String) {
         viewModelScope.launch {
             if (connectivityObserver.isConnected()) {
                 loading.value = true
@@ -71,9 +71,6 @@ class HomeViewModel(
                 imitateLoading()
                 loading.value = false
                 setLadingProgress(100)
-            } else {
-
-                Log.d("myLogs", "ошибка в получении фотки")
             }
         }
     }
@@ -126,8 +123,6 @@ class HomeViewModel(
             if (connectivityObserver.isConnected()) {
                 val response = photoGalleryRepository.getPhotoGallery()
                 _galleryList.postValue(response)
-            } else {
-                Log.d("myLogs", "ошибка в получении фотки")
             }
         }
     }
@@ -165,7 +160,7 @@ class HomeViewModel(
             }
         }
     }
-    fun getCurrentQuery(): String{
+    private fun getCurrentQuery(): String{
         return _currentQuery.value ?: ""
     }
     fun refreshData() {

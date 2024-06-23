@@ -1,12 +1,15 @@
 package com.pvelll.newpexelsapp.di
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.pvelll.newpexelsapp.BuildConfig
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
+import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

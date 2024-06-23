@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -54,8 +55,8 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(savedInstanceState != null){
-            selectedTitle = arguments?.getString(SELECTED_TITLE_KEY)
+        if (savedInstanceState != null) {
+            selectedTitle = arguments?.getString(getString(R.string.selected_title))
             val currentQuery = viewModel.currentQuery.value
             val photoList = viewModel.pictureList.value?.photos
             if (currentQuery != null) {
@@ -124,7 +125,11 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                             R.drawable.gallery_selector
                         )
                     }
-                previousTextView?.setTextColor(resources.getColor(R.color.text))
+                previousTextView?.setTextColor(AppCompatResources.getColorStateList(
+                    context!!,
+                    R.color.text
+                ).defaultColor
+                )
                 selectedView = newItem
                 viewModel.searchByTitle(item.title)
                 selectedView!!.background = context?.let { it1 ->
@@ -133,7 +138,11 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                         R.drawable.gallery_item_selected
                     )
                 }
-                textView.setTextColor(resources.getColor(R.color.text))
+                textView.setTextColor(AppCompatResources.getColorStateList(
+                    context!!,
+                    R.color.text
+                ).defaultColor
+                )
                 previousSelectedView = selectedView
                 previousTextView = textView
                 binding.searchBar.setQuery(item.title, false)
@@ -233,9 +242,19 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                     if (newText != selectedTitle) {
                         selectedTitle = null
                         selectedView?.background =
-                            resources.getDrawable(R.drawable.gallery_selector)
+                            context?.let {
+                                AppCompatResources.getDrawable(
+                                    it,
+                                    R.drawable.gallery_selector
+                                )
+                            }
                         selectedView?.findViewById<TextView>(R.id.featured_topic_text)
-                            ?.setTextColor(resources.getColor(R.color.text))
+                            ?.setTextColor(
+                                AppCompatResources.getColorStateList(
+                                    context!!,
+                                    R.color.text
+                                ).defaultColor
+                            )
                     }
                 }
                 return false
@@ -288,17 +307,13 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     private fun clearSearchBar() {
         binding.searchBar.setQuery("", false)
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SELECTED_TITLE_KEY, selectedTitle)
-        outState.putString(CURRENT_QUERY_KEY, binding.searchBar.query.toString())
-        outState.putParcelableArrayList(PHOTO_LIST_KEY, photoAdapter.getPhotoData())
+        outState.putString(getString(R.string.selected_title), selectedTitle)
+        outState.putString(getString(R.string.current_query), binding.searchBar.query.toString())
+        outState.putParcelableArrayList(getString(R.string.photo_list), photoAdapter.getPhotoData())
     }
 
 
-    companion object {
-        private const val SELECTED_TITLE_KEY = "selected_title"
-        private const val CURRENT_QUERY_KEY = "current_query"
-        private const val PHOTO_LIST_KEY = "photo_list"
-    }
 }
