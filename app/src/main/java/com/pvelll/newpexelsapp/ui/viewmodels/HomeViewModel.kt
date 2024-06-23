@@ -25,17 +25,13 @@ import org.koin.java.KoinJavaComponent
 import retrofit2.Response
 
 class HomeViewModel(
-    application: Application,
-) : AndroidViewModel(application)
+    private val photosRepository: PhotosRepositoryImpl,
+    private val photoGalleryRepository: PhotoGalleryRepositoryImpl,
+    private val curatedPhotosRepository: CuratedPhotosRepositoryImpl,
+    private val connectivityObserver : NetworkConnectivityObserver
+
+) : ViewModel()
 {
-    private val api by KoinJavaComponent.inject<PexelApi>(PexelApi::class.java)
-    private val connectivityObserver by KoinJavaComponent.inject<NetworkConnectivityObserver>(
-        NetworkConnectivityObserver::class.java
-    )
-    private val photosRepository: PhotosRepositoryImpl = PhotosRepositoryImpl(api)
-    private val photoGalleryRepository: PhotoGalleryRepositoryImpl = PhotoGalleryRepositoryImpl(api)
-    private val curatedPhotosRepository: CuratedPhotosRepositoryImpl =
-        CuratedPhotosRepositoryImpl(api)
     private var _pictureList: MutableLiveData<List<Photo>> = MutableLiveData()
     val pictureList: LiveData<List<Photo>>
         get() = _pictureList

@@ -33,9 +33,11 @@ import com.pvelll.newpexelsapp.ui.adapters.HomeRecyclerViewAdapter
 import com.pvelll.newpexelsapp.ui.utils.SlideInUpAnimator
 import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.factory.KoinViewModelFactory
 
 class HomeFragment : Fragment(), OnPhotoClickListener {
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel : HomeViewModel by viewModel()
     private lateinit var photoAdapter: HomeRecyclerViewAdapter
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -67,7 +69,6 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         setupRecyclerView()
         setupListeners()
         setupObservers()

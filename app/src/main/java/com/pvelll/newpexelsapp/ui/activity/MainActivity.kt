@@ -10,15 +10,16 @@ import com.pvelll.newpexelsapp.domain.connectivity.ConnectivityObserver
 import com.pvelll.newpexelsapp.domain.usecases.LoadStatus
 import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.java.KoinJavaComponent
 import org.koin.java.KoinJavaComponent.inject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
+    val homeViewModel : HomeViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val homeViewModel  = ViewModelProvider(this)[HomeViewModel::class.java]
+
         val networkConnectivityObserver by inject<NetworkConnectivityObserver>(NetworkConnectivityObserver::class.java)
         installSplashScreen().setKeepOnScreenCondition {
             if (networkConnectivityObserver.isConnected()) {
