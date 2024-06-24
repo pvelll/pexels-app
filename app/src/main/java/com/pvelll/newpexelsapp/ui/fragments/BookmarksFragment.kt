@@ -1,6 +1,5 @@
 package com.pvelll.newpexelsapp.ui.fragments
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,16 +13,11 @@ import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.databinding.FragmentBookmarksBinding
 import com.pvelll.newpexelsapp.domain.usecases.OnPhotoClickListener
 import com.pvelll.newpexelsapp.ui.adapters.BookmarksRecyclerViewAdapter
-import com.pvelll.newpexelsapp.ui.viewmodelfactories.BookmarksViewModelFactory
 import com.pvelll.newpexelsapp.ui.viewmodels.BookmarksViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BookmarksFragment : Fragment(), OnPhotoClickListener {
-
-    companion object {
-        fun newInstance() = BookmarksFragment()
-    }
-
-    private lateinit var viewModel: BookmarksViewModel
+    private val viewModel: BookmarksViewModel by viewModel()
     private lateinit var recyclerViewAdapter: BookmarksRecyclerViewAdapter
     private var _binding: FragmentBookmarksBinding? = null
     private val binding get() = _binding!!
@@ -37,10 +31,6 @@ class BookmarksFragment : Fragment(), OnPhotoClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            BookmarksViewModelFactory(requireActivity().application)
-        )[BookmarksViewModel::class.java]
         setupListener()
         onEmptyPhotoList()
         setupRecyclerView()
@@ -48,7 +38,7 @@ class BookmarksFragment : Fragment(), OnPhotoClickListener {
     }
 
     private fun setupRecyclerView() {
-        recyclerViewAdapter = BookmarksRecyclerViewAdapter(this)
+        recyclerViewAdapter = context?.let { BookmarksRecyclerViewAdapter(this, context = it) }!!
         viewModel.setPictureAdapter(recyclerViewAdapter)
         binding.pictureRecyclerView.apply {
             adapter = recyclerViewAdapter
@@ -73,7 +63,7 @@ class BookmarksFragment : Fragment(), OnPhotoClickListener {
         super.onResume()
         viewModel.allPhotos.observe(viewLifecycleOwner, Observer { photos ->
             photos?.let {
-                recyclerViewAdapter.setPictureData(it as ArrayList<Photo>, requireContext())
+                recyclerViewAdapter.setPictureData(it as ArrayList<Photo>)
                 onEmptyPhotoList()
             }
         })

@@ -18,11 +18,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
-class BookmarksViewModel( private val application: Application) : AndroidViewModel(application) {
+class BookmarksViewModel(
     private val repository : DatabaseRepositoryImpl
-        get() = DatabaseRepositoryImpl()
-    private var loading: MutableLiveData<Boolean> = MutableLiveData()
-    var loadingProgress: MutableLiveData<Int> = MutableLiveData(0)
+) :ViewModel() {
+
     var allPhotos: LiveData<List<Photo>> = MutableLiveData()
     private lateinit var pictureAdapter: BookmarksRecyclerViewAdapter
 
@@ -32,32 +31,12 @@ class BookmarksViewModel( private val application: Application) : AndroidViewMod
         }
     }
 
-    private val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun onChange(selfChange: Boolean) {
-            observePhotos(pictureAdapter)
-        }
-    }
-
     private fun observePhotos(adapter: BookmarksRecyclerViewAdapter) {
         allPhotos.observeForever { photos ->
-            adapter.setPictureData(photos as ArrayList<Photo>, getApplication())
+            adapter.setPictureData(photos as ArrayList<Photo>)
         }
     }
 
-    init {
-        val app = getApplication<Application>()
-        app.contentResolver.registerContentObserver(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            true,
-            observer
-        )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        val app = getApplication<Application>()
-        app.contentResolver.unregisterContentObserver(observer)
-    }
 
     fun setPictureAdapter(adapter: BookmarksRecyclerViewAdapter) {
         pictureAdapter = adapter

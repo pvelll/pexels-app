@@ -14,12 +14,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.databinding.FragmentMainBinding
-import com.pvelll.newpexelsapp.ui.viewmodels.MainViewModel
 
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainViewModel
     companion object {
         fun newInstance() = MainFragment()
     }

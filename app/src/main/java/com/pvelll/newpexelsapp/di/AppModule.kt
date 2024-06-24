@@ -1,12 +1,22 @@
 package com.pvelll.newpexelsapp.di
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.pvelll.newpexelsapp.BuildConfig
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.database.PhotoDatabase
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
+import com.pvelll.newpexelsapp.data.repository.CuratedPhotosRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.DatabaseRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.PhotoGalleryRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.PhotoStorageRepositoryImpl
+import com.pvelll.newpexelsapp.data.repository.PhotosRepositoryImpl
+import com.pvelll.newpexelsapp.ui.viewmodels.BookmarksViewModel
+import com.pvelll.newpexelsapp.ui.viewmodels.DetailsViewModel
+import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,6 +42,36 @@ val apiModule = module {
 
     }
 
+}
+
+val repoModule = module {
+    single{
+        PhotosRepositoryImpl(get())
+    }
+    single {
+        PhotoGalleryRepositoryImpl(get())
+    }
+    single{
+        CuratedPhotosRepositoryImpl(get())
+    }
+    single {
+        DatabaseRepositoryImpl()
+    }
+    single {
+        PhotoStorageRepositoryImpl()
+    }
+}
+
+val viewModelModule = module {
+    viewModel {
+        HomeViewModel(get(),get(),get(),get())
+    }
+    viewModel {
+        DetailsViewModel(get(),get(),get())
+    }
+    viewModel {
+        BookmarksViewModel(get())
+    }
 }
 
 val databaseModule = module{

@@ -11,12 +11,16 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.api.PexelApi
 import com.pvelll.newpexelsapp.data.model.Collection
@@ -29,14 +33,14 @@ import com.pvelll.newpexelsapp.ui.adapters.HomeRecyclerViewAdapter
 import com.pvelll.newpexelsapp.ui.utils.SlideInUpAnimator
 import com.pvelll.newpexelsapp.ui.viewmodels.HomeViewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.factory.KoinViewModelFactory
 
 class HomeFragment : Fragment(), OnPhotoClickListener {
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel : HomeViewModel by viewModel()
     private lateinit var photoAdapter: HomeRecyclerViewAdapter
     private var _binding: FragmentHomeBinding? = null
-    private val binding
-        get() = _binding!!
-    private var searchQuery: String = ""
+    private val binding get() = _binding!!
     private var selectedView: View? = null
     private var selectedTitle: String? = null
     private var previousSelectedView: View? = null
@@ -50,22 +54,46 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            selectedTitle = arguments?.getString(getString(R.string.selected_title))
+            val currentQuery = viewModel.currentQuery.value
+            if (currentQuery != null) {
+                binding.searchBar.setQuery(currentQuery, false)
+            }
+            viewModel.pictureList.value?.let { setPhotos(it) }
+        }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        onConnectivityError()
-        binding.scrollLinearLayout.orientation = LinearLayout.HORIZONTAL
-        viewModel.getGalleries()
         setupRecyclerView()
         setupListeners()
         setupObservers()
+
+        savedInstanceState?.let {
+            selectedTitle = it.getString(getString(R.string.selected_title))
+            val currentQuery = it.getString(getString(R.string.current_query))
+            val photoList = it.getParcelableArrayList<Photo>(getString(R.string.photo_list))
+            currentQuery?.let { query -> binding.searchBar.setQuery(query, false) }
+            photoList?.let { list -> setPhotos(list) }
+        } ?: run {
+            onConnectivityError()
+            viewModel.getGalleries()
+        }
     }
 
     private fun onConnectivityError() {
         if (viewModel.isNetworkAvailable.value == false) {
             binding.mainHomeLayout.visibility = View.GONE
             binding.noNetworkLayout.visibility = View.VISIBLE
-            Toast.makeText(requireContext(), resources.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                resources.getString(R.string.no_internet),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -79,14 +107,13 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         findNavController().navigate(action)
     }
 
-    private fun setPhotos(items: ArrayList<Photo>) {
+    private fun setPhotos(items: List<Photo>) {
         photoAdapter.setPhotoData(items)
         binding.pictureRecyclerView.visibility = View.VISIBLE
         binding.noDataLayout.visibility = View.GONE
-
     }
 
-    private fun setGalleries(items: ArrayList<Collection>) {
+    private fun setGalleries(items: List<Collection>) {
         items.forEach {
             val item = it
             val newItem: View = layoutInflater.inflate(R.layout.item_gallery_topic, null)
@@ -100,30 +127,40 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
                             R.drawable.gallery_selector
                         )
                     }
-                previousTextView?.setTextColor(resources.getColor(R.color.text))
-
+                previousTextView?.setTextColor(
+                    AppCompatResources.getColorStateList(
+                        context!!,
+                        R.color.text
+                    ).defaultColor
+                )
                 selectedView = newItem
-                binding.searchBar.setQuery(item.title, false)
-                viewModel.currentQuery.value = item.title
+                viewModel.searchByTitle(item.title)
                 selectedView!!.background = context?.let { it1 ->
                     ContextCompat.getDrawable(
                         it1,
                         R.drawable.gallery_item_selected
                     )
                 }
-                textView.setTextColor(resources.getColor(R.color.text))
+                textView.setTextColor(
+                    AppCompatResources.getColorStateList(
+                        context!!,
+                        R.color.text
+                    ).defaultColor
+                )
                 previousSelectedView = selectedView
                 previousTextView = textView
+                binding.searchBar.setQuery(item.title, false)
             }
             binding.scrollLinearLayout.addView(newItem)
         }
     }
 
+
     private fun setupObservers() {
         viewModel.pictureList.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                if (it.photos.isNotEmpty()) {
-                    setPhotos(it.photos as ArrayList<Photo>)
+                if (it.isNotEmpty()) {
+                    setPhotos(it)
                 } else {
                     showStub()
                 }
@@ -137,18 +174,7 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         })
         viewModel.galleryList.observe(viewLifecycleOwner, Observer {
             if (it?.collections != null) {
-                setGalleries(it.collections as ArrayList<Collection>)
-            } else {
-                if (viewModel.isNetworkAvailable.value == false) {
-                    onConnectivityError()
-                } else {
-                    // TODO: another error
-                }
-            }
-        })
-        viewModel.curatedPhotosList.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                setPhotos(it.photos as ArrayList<Photo>)
+                setGalleries(it.collections)
             } else {
                 if (viewModel.isNetworkAvailable.value == false) {
                     onConnectivityError()
@@ -167,10 +193,23 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             for (i in 0 until binding.scrollLinearLayout.childCount) {
                 val child = binding.scrollLinearLayout.getChildAt(i)
                 val textView: TextView = child.findViewById(R.id.featured_topic_text)
+
                 if (textView.text.toString().equals(it, ignoreCase = true)) {
                     child.background = ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.gallery_item_selected
+                    )
+                    textView.setTextColor(resources.getColor(R.color.text))
+
+                    selectedView = child
+                    selectedTitle = textView.text.toString()
+                    previousSelectedView = selectedView
+                    previousTextView = textView
+                } else {
+
+                    child.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.gallery_selector
                     )
                     textView.setTextColor(resources.getColor(R.color.text))
                 }
@@ -184,36 +223,31 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         binding.searchBar.queryHint = resources.getString(R.string.search)
         binding.searchBar.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
-            private var handler = Handler(Looper.getMainLooper())
-            private val runnable = Runnable {
-                onConnectivityError()
-                viewModel.currentQuery.value = searchQuery
-                if (searchQuery == "") {
-                    viewModel.getCuratedPhotos()
-                } else {
-                    viewModel.getPicture(searchQuery)
-                }
-
-            }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.currentQuery.value = query
-                searchQuery = query
-                runnable.run()
+                viewModel.searchByQuery(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.currentQuery.value = newText
-                searchQuery = newText
-                handler.removeCallbacks(runnable)
-                handler.postDelayed(runnable, 500)
-                if(viewModel.isNetworkAvailable.value == true){
+                viewModel.searchByQuery(newText)
+                if (viewModel.isNetworkAvailable.value == true) {
                     if (newText != selectedTitle) {
                         selectedTitle = null
-                        selectedView?.background = resources.getDrawable(R.drawable.gallery_selector)
+                        selectedView?.background =
+                            context?.let {
+                                AppCompatResources.getDrawable(
+                                    it,
+                                    R.drawable.gallery_selector
+                                )
+                            }
                         selectedView?.findViewById<TextView>(R.id.featured_topic_text)
-                            ?.setTextColor(resources.getColor(R.color.text))
+                            ?.setTextColor(
+                                AppCompatResources.getColorStateList(
+                                    context!!,
+                                    R.color.text
+                                ).defaultColor
+                            )
                     }
                 }
                 return false
@@ -221,16 +255,15 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
         })
         binding.tryAgainButton.setOnClickListener {
             if (viewModel.isNetworkAvailable.value == true) {
-                if (searchQuery.isNotEmpty()) {
-                    viewModel.getPicture(searchQuery)
-                } else {
-                    viewModel.getCuratedPhotos()
-                    viewModel.getGalleries()
-                }
+                viewModel.refreshData()
                 binding.noNetworkLayout.visibility = View.GONE
                 binding.mainHomeLayout.visibility = View.VISIBLE
             } else {
-                Toast.makeText(requireContext(), resources.getString(R.string.no_internet), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    resources.getString(R.string.no_internet),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         binding.exploreButton.setOnClickListener {
@@ -249,7 +282,6 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
             layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
             setItemViewCacheSize(1000)
         }
-        photoAdapter.clearPictureData()
     }
 
     private fun showStub() {
@@ -266,4 +298,16 @@ class HomeFragment : Fragment(), OnPhotoClickListener {
     private fun clearSearchBar() {
         binding.searchBar.setQuery("", false)
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(getString(R.string.selected_title), selectedTitle)
+        outState.putString(getString(R.string.current_query), binding.searchBar.query.toString())
+        outState.putParcelableArrayList(
+            getString(R.string.photo_list),
+            ArrayList(photoAdapter.getPhotoData())
+        )
+    }
+
+
 }

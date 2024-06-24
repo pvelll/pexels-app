@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pvelll.newpexelsapp.data.api.PexelApi
+import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.data.network.NetworkConnectivityObserver
 import com.pvelll.newpexelsapp.data.repository.CuratedPhotosRepositoryImpl
 import com.pvelll.newpexelsapp.data.repository.PhotoGalleryRepositoryImpl
@@ -17,26 +18,29 @@ import com.pvelll.newpexelsapp.domain.models.CuratedPhotosResponse
 import com.pvelll.newpexelsapp.domain.models.PhotoGalleryResponse
 import com.pvelll.newpexelsapp.domain.models.PhotosResponse
 import com.pvelll.newpexelsapp.domain.usecases.LoadStatus
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 import retrofit2.Response
 
 class HomeViewModel(
-    application: Application,
-) : AndroidViewModel(application) {
-    private val api by KoinJavaComponent.inject<PexelApi>(PexelApi::class.java)
-    private val connectivityObserver by KoinJavaComponent.inject<NetworkConnectivityObserver>(
-        NetworkConnectivityObserver::class.java
-    )
-    private val photosRepository: PhotosRepositoryImpl = PhotosRepositoryImpl(api)
-    private val photoGalleryRepository: PhotoGalleryRepositoryImpl = PhotoGalleryRepositoryImpl(api)
-    private val curatedPhotosRepository: CuratedPhotosRepositoryImpl =
-        CuratedPhotosRepositoryImpl(api)
-    var pictureList: MutableLiveData<PhotosResponse> = MutableLiveData()
-    var galleryList: MutableLiveData<PhotoGalleryResponse> = MutableLiveData()
-    var curatedPhotosList: MutableLiveData<CuratedPhotosResponse> = MutableLiveData()
-    var currentQuery: MutableLiveData<String> = MutableLiveData()
+    private val photosRepository: PhotosRepositoryImpl,
+    private val photoGalleryRepository: PhotoGalleryRepositoryImpl,
+    private val curatedPhotosRepository: CuratedPhotosRepositoryImpl,
+    private val connectivityObserver : NetworkConnectivityObserver
+
+) : ViewModel()
+{
+    private var _pictureList: MutableLiveData<List<Photo>> = MutableLiveData()
+    val pictureList: LiveData<List<Photo>>
+        get() = _pictureList
+    private var _galleryList: MutableLiveData<PhotoGalleryResponse> = MutableLiveData()
+    val galleryList: LiveData<PhotoGalleryResponse>
+        get() = _galleryList
+    private var _currentQuery: MutableLiveData<String> = MutableLiveData()
+    val currentQuery: LiveData<String>
+        get() = _currentQuery
     private var loading: MutableLiveData<Boolean> = MutableLiveData()
     var loadingProgress: MutableLiveData<Int> = MutableLiveData(0)
     var curatedPhotosLoadStatus: MutableLiveData<LoadStatus> = MutableLiveData(LoadStatus.LOADING)
@@ -51,19 +55,16 @@ class HomeViewModel(
         getGalleries()
     }
 
-    fun getPicture(query: String) {
+    private fun getPicture(query: String) {
         viewModelScope.launch {
             if (connectivityObserver.isConnected()) {
                 loading.value = true
                 setLadingProgress(0)
                 val response = photosRepository.getPhotos(query)
-                pictureList.postValue(response)
+                _pictureList.postValue(response.photos)
                 imitateLoading()
                 loading.value = false
                 setLadingProgress(100)
-            } else {
-
-                Log.d("myLogs", "ошибка в получении фотки")
             }
         }
     }
@@ -76,7 +77,7 @@ class HomeViewModel(
                 setLadingProgress(0)
                 try {
                     val response = curatedPhotosRepository.getCuratedPhotos()
-                    curatedPhotosList.postValue(response)
+                    _pictureList.postValue(response.photos)
                     curatedPhotosLoadStatus.postValue(LoadStatus.SUCCESS)
                 } catch (e: Exception) {
                     curatedPhotosLoadStatus.postValue(LoadStatus.FAILURE)
@@ -86,7 +87,6 @@ class HomeViewModel(
                 setLadingProgress(100)
             } else {
                 curatedPhotosLoadStatus.postValue(LoadStatus.NO_INTERNET)
-                Log.d("myLogs", "ошибка в получении фотки")
             }
         }
     }
@@ -115,9 +115,7 @@ class HomeViewModel(
         viewModelScope.launch {
             if (connectivityObserver.isConnected()) {
                 val response = photoGalleryRepository.getPhotoGallery()
-                galleryList.postValue(response)
-            } else {
-                Log.d("myLogs", "ошибка в получении фотки")
+                _galleryList.postValue(response)
             }
         }
     }
@@ -133,6 +131,39 @@ class HomeViewModel(
     private fun setLadingProgress(progress: Int) {
         viewModelScope.launch {
             loadingProgress.value = progress
+        }
+    }
+
+    fun searchByTitle(title: String) {
+        viewModelScope.launch {
+            _currentQuery.value = title
+            getPicture(title)
+        }
+    }
+
+    fun searchByQuery(query: String) {
+        viewModelScope.launch {
+            _currentQuery.value = query
+            if (query.isEmpty()) {
+                getCuratedPhotos()
+            } else {
+                getPicture(query)
+                val gallery = _galleryList.value?.collections?.find { it.title.equals(query, ignoreCase = true) }
+            }
+        }
+    }
+    private fun getCurrentQuery(): String{
+        return _currentQuery.value ?: ""
+    }
+    fun refreshData() {
+        viewModelScope.launch {
+            val query = getCurrentQuery()
+            if (query.isNotEmpty()) {
+                getPicture(query)
+            } else {
+                getCuratedPhotos()
+                getGalleries()
+            }
         }
     }
 }

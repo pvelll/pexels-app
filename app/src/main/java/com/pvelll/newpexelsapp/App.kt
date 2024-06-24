@@ -4,6 +4,8 @@ import android.app.Application
 import com.pvelll.newpexelsapp.di.apiModule
 import com.pvelll.newpexelsapp.di.databaseModule
 import com.pvelll.newpexelsapp.di.networkConnectivityModule
+import com.pvelll.newpexelsapp.di.repoModule
+import com.pvelll.newpexelsapp.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext
@@ -14,7 +16,8 @@ class App : Application() {
         GlobalContext.startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(apiModule, databaseModule, networkConnectivityModule)
+            modules(apiModule, databaseModule, networkConnectivityModule, repoModule,
+                viewModelModule)
         }
     }
 }

@@ -24,5 +24,8 @@
     <string name="no_internet">No internet connection</string>
     <string name="photo_removed_from_bookmarks">Photo removed from bookmarks</string>
     <string name="search">Search</string>
+    <string name="selected_title" translatable="false">selected_title</string>
+    <string name="current_query" translatable="false">current_query</string>
+    <string name="photo_list" translatable="false">photo_list</string>
 
 </resources>

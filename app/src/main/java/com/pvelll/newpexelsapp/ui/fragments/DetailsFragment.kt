@@ -1,15 +1,11 @@
 package com.pvelll.newpexelsapp.ui.fragments
 
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -17,15 +13,11 @@ import com.pvelll.newpexelsapp.R
 import com.pvelll.newpexelsapp.data.model.Photo
 import com.pvelll.newpexelsapp.databinding.FragmentDetailsBinding
 import com.pvelll.newpexelsapp.ui.viewmodels.DetailsViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.IOException
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment() : Fragment() {
-    private lateinit var viewModel: DetailsViewModel
+    private val viewModel: DetailsViewModel by viewModel()
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
@@ -39,7 +31,6 @@ class DetailsFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
         val args: DetailsFragmentArgs by navArgs()
         viewModel.init(args.photo)
         setupClickListeners()
@@ -52,14 +43,14 @@ class DetailsFragment() : Fragment() {
         }
 
         binding.saveToBookmarks.setOnClickListener {
-            viewModel.saveToBookmarks()
+            context?.let { it1 -> viewModel.saveToBookmarks(it1) }
         }
 
         binding.downloadButton.setOnClickListener {
-            viewModel.downloadPhoto()
+            context?.let { it1 -> viewModel.downloadPhoto(it1) }
         }
 
-        binding.exploreButton.setOnClickListener{
+        binding.exploreButton.setOnClickListener {
             val action = DetailsFragmentDirections.actionDetailsFragmentToHomeFragment()
             findNavController().navigate(action)
         }

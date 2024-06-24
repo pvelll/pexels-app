@@ -1,6 +1,7 @@
 package com.pvelll.newpexelsapp.ui.viewmodels
 
 import android.app.Application
+import android.content.Context
 import android.media.tv.interactive.AppLinkInfo
 import android.os.Environment
 import androidx.lifecycle.AndroidViewModel
@@ -25,13 +26,11 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
-class DetailsViewModel(application: Application) : AndroidViewModel(application) {
-    private val databaseRepo = DatabaseRepositoryImpl()
-    private val photoStorageRepo = PhotoStorageRepositoryImpl()
-    private val connectivityObserver by inject<NetworkConnectivityObserver>(
-        NetworkConnectivityObserver::class.java
-    )
-
+class DetailsViewModel(
+    private val databaseRepo: DatabaseRepositoryImpl,
+    private val photoStorageRepo: PhotoStorageRepositoryImpl,
+    private val connectivityObserver: NetworkConnectivityObserver,
+) : ViewModel() {
     private val _photo = MutableLiveData<Photo>()
     val photo: LiveData<Photo>
         get() = _photo
@@ -61,41 +60,44 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun saveToBookmarks() {
-        if (_isBookmarked.value == true) {
-            removeFromBookmarks()
-        } else {
-            if (_isNetworkAvailable.value == connectivityObserver.isConnected()) {
-                viewModelScope.launch {
-                    val file = File(
-                        getApplication<Application>().getExternalFilesDir(null),
-                        "${photo.value?.id}.jpeg"
-                    )
-                    try {
-                        if (file.exists()) {
-                            _errorMessage.value = getApplication<Application>().resources.getString(
-                                R.string.photo_exists
-                            )
-                        } else {
-                            photo.value?.let {
-                                photoStorageRepo.saveToBookmarks(it, file)
-                                _isBookmarked.value = true
-                                _errorMessage.value =
-                                    getApplication<Application>().resources.getString(R.string.photo_successfully_saved_bookmarks)
-                            }
-                        }
-                    } catch (e: IOException) {
-                        _errorMessage.value = getApplication<Application>().resources.getString(R.string.error_saving_photo)
-                    }
-                }
+    fun saveToBookmarks(context: Context) {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (_isBookmarked.value == true) {
+                removeFromBookmarks(context)
             } else {
-                _errorMessage.value = getApplication<Application>().resources.getString(R.string.no_internet)
-            }
+                if (_isNetworkAvailable.value == connectivityObserver.isConnected()) {
+                    viewModelScope.launch {
+                        val file = File(
+                            context.getExternalFilesDir(null),
+                            "${photo.value?.id}.jpeg"
+                        )
+                        try {
+                            if (file.exists()) {
+                                _errorMessage.value = context.resources.getString(
+                                    R.string.photo_exists
+                                )
+                            } else {
+                                photo.value?.let {
+                                    photoStorageRepo.saveToBookmarks(it, file)
+                                    _isBookmarked.value = true
+                                    _errorMessage.value =
+                                        context.resources.getString(R.string.photo_successfully_saved_bookmarks)
+                                }
+                            }
+                        } catch (e: IOException) {
+                            _errorMessage.value =
+                                context.resources.getString(R.string.error_saving_photo)
+                        }
+                    }
+                } else {
+                    _errorMessage.value = context.resources.getString(R.string.no_internet)
+                }
 
+            }
         }
     }
 
-    fun downloadPhoto() {
+    fun downloadPhoto(context: Context) {
         viewModelScope.launch {
             val directory =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -103,25 +105,26 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
             try {
                 photo.value?.let {
                     photoStorageRepo.downloadPhoto(it.src.original, file)
-                    _errorMessage.value = getApplication<Application>().resources.getString(R.string.photo_downloaded)
+                    _errorMessage.value = context.resources.getString(R.string.photo_downloaded)
 
                 }
             } catch (e: IOException) {
-                _errorMessage.value = getApplication<Application>().resources.getString(R.string.error_saving_photo)
+                _errorMessage.value = context.resources.getString(R.string.error_saving_photo)
             }
         }
     }
 
-    private fun removeFromBookmarks() {
+    private fun removeFromBookmarks(context: Context) {
         viewModelScope.launch {
             photo.value?.let { photo ->
                 val file = File(
-                    getApplication<Application>().getExternalFilesDir(null),
+                    context.getExternalFilesDir(null),
                     "${photo.id}.jpeg"
                 )
                 photoStorageRepo.removePhoto(photo, file)
                 _isBookmarked.value = false
-                _errorMessage.value = getApplication<Application>().resources.getString(R.string.photo_removed_from_bookmarks)
+                _errorMessage.value =
+                    context.resources.getString(R.string.photo_removed_from_bookmarks)
             }
         }
     }
